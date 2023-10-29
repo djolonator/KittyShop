@@ -1,0 +1,40 @@
+﻿@model KittyShop.Models.RegisterModel
+
+@{
+    Layout = null;
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<div class="container wrapper position-absolute top-50 start-50 translate-middle">
+   @*  <div class="imgcontainer">
+        <img src="~/Images/funny-cat-art-print.jpg" />
+    </div> *@
+    <form asp-action="RegisterUser" asp-controller="Home">
+        <div class="form-group">
+            <label asp-for="UserName" class="control-label"></label>
+            <input asp-for="UserName" class="form-control" placeholder="Name" />
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Password" class="control-label"></label>
+            <input asp-for="Password" class="form-control" placeholder="Password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ConfirmPassword" class="control-label"></label>
+            <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Email" class="control-label"></label>
+            <input asp-for="Email" class="form-control" placeholder="Email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group d-grid">
+            <input type="submit" value="Register" class="btn btn-primary mt-2" />
+        </div>
+    </form>
+</div>

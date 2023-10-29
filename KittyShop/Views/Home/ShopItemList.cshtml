@@ -1,0 +1,77 @@
+﻿@using KittyShop.Services.Utility;
+@model PaginatedList<CatModel>
+
+@{
+    ViewBag.UserType = string.Empty;
+
+    if (User.Claims!.FirstOrDefault()!.Value == "Regular")
+        ViewBag.UserType = "Regular";
+    else
+        ViewBag.UserType = "Admin";
+}
+
+<link rel="stylesheet" href="~/css/shopItemList.css" asp-append-version="true" />
+
+<form class="searchForm" asp-controller="Home" asp-action="ShopItemList" metod="get">
+    <div class="container">
+        <div class="row">
+            <div class="col  offset-md-3">
+                @{
+                    if (ViewBag.UserType == "Admin")
+                    {
+                        <a href="/Admin/AddShopItem" class="btn btn-primary" role="button">Add item</a>
+                    }
+                }
+        </div>
+            <div class="col searchDiv  offset-md-3">
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        Filter
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><input type="text" name="furrColor" placeholder="Furr color" /></li>
+                        <li><input type="text" name="eyesColor" placeholder="Eyes color" /></li>
+                        <li><input type="text" name="description" placeholder="Description" /></li>
+                        <li><input type="text" name="race" placeholder="Race" /></li>
+                    </ul>
+                </div>
+                <div>
+                    <input type="submit" value="Search" />
+                </div>
+        </div>
+        </div>
+    </div>
+</form>
+
+<div class="container">
+    <div class="row justify-content-center">
+
+        @foreach (var cat in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                @await Html.PartialAsync("_CatItemCardPartial", cat)
+            </div>
+        }
+       
+    </div>
+</div>
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-controller="Home" asp-action="ShopItemList"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-controller="Home" asp-action="ShopItemList"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>

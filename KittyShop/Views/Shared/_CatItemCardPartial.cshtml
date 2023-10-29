@@ -1,0 +1,22 @@
+﻿@model CatModel
+
+
+<div class="card" style="width: 18rem;">
+    <img src="~/@Model.ImgUrlPath" class="card-img-top" alt="...">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Race</h5>
+        <h5 class="card-title">@Model.Price</h5>
+        <p class="card-text">@Model.Description</p>
+        @{
+            if (ViewBag.UserType == "Admin")
+            {
+                <a asp-controller="Admin" asp-action="EditShopItem" asp-route-productId="@Model.ProductId" class="btn btn-primary">Edit product</a>
+                <a  class="btn btn-danger">Remove product</a>
+            }
+            else
+            {
+                <a href="#" class="btn btn-primary">Add to cart</a>
+            }
+        }
+    </div>
+</div>

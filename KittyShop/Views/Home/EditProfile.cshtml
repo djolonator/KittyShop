@@ -1,0 +1,34 @@
+﻿@model KittyShop.Models.EditProfileModel
+
+
+<div class="container wrapper position-absolute top-50 start-50 translate-middle">
+    <form asp-action="EditProfile" asp-controller="Home">
+        <div class="form-group">
+            <label asp-for="NewUserName" class="control-label"></label>
+            <input asp-for="NewUserName" class="form-control" placeholder="Name" />
+            <span asp-validation-for="NewUserName" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewPassword" class="control-label"></label>
+            <input asp-for="NewPassword" class="form-control" placeholder="Password" />
+            <span asp-validation-for="NewPassword" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewConfirmPassword" class="control-label"></label>
+            <input asp-for="NewConfirmPassword" class="form-control" placeholder="Confirm password" />
+            <span asp-validation-for="NewConfirmPassword" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="NewEmail" class="control-label"></label>
+            <input asp-for="NewEmail" class="form-control" placeholder="Email" />
+            <span asp-validation-for="NewEmail" class="text-danger"></span>
+        </div>
+        <div class="form-group d-grid">
+            <input type="submit" value="Edit profile" class="btn btn-primary mt-2" />
+        </div>
+        @Html.HiddenFor(m => m.UserId)
+        @Html.HiddenFor(m => m.UserName)
+        @Html.HiddenFor(m => m.Password)
+        @Html.HiddenFor(m => m.Email)
+    </form>
+</div>
