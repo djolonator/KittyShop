@@ -43,11 +43,11 @@ namespace KittyShop.Services
                 product.ImgUrlPath = await _imageService.SaveProductImageToProjectFolder(product.Image);
             }
 
-            var entityToUpdate = _adminRepository.FindProductByIdAsync(product.ProductId);
+            var entityToUpdate = await _adminRepository.FindProductByIdAsync(product.ProductId);
 
             if (entityToUpdate != null)
             {
-                await _mapper.Map(product, entityToUpdate);
+                _mapper.Map(product, entityToUpdate);
                 if (!await _adminRepository.SaveChangesAsync())
                     message = "There was an error editing product";
             }

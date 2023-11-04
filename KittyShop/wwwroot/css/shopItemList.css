@@ -9,3 +9,21 @@
 .searchForm {
     margin-bottom:20px;
 }
+
+.cardButtonDiv {
+    display: flex;
+    justify-content: space-between;
+}
+
+.descriptionElement{
+    height:150px;
+}
+
+.addToCartButton {
+    float: right;
+}
+
+.paginationButtonsDiv {
+    display: flex;
+    justify-content: center;
+}

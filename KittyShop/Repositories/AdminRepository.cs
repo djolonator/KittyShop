@@ -28,7 +28,5 @@ namespace KittyShop.Repositories
         {
             return await _context.Products.FindAsync(productId);
         }
-
-        
     }
 }

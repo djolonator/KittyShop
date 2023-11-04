@@ -21,32 +21,20 @@ namespace KittyShop.Repositories
         {
             var products = _context.Products as IQueryable<Product>;
 
-            if (!string.IsNullOrEmpty(furrColor))
-            {
-                furrColor = furrColor.Trim();
-                products = products.Where(p => p.FurrColor.Contains(furrColor));
-            }
+            products = AddToQueryFurrFilter(furrColor, products);
+            products = AddToQueryEyesFilter(eyesColor, products);
+            products = AddToQueryDescriptionFilter(description, products);
+            products = AddToQueryRaceFilter(race, products);
 
-            if (!string.IsNullOrEmpty(eyesColor))
-            {
-                eyesColor = eyesColor.Trim();
-                products = products.Where(p => p.EyesColor.Contains(eyesColor));
-            }
+            var paginatedProductsModel = ConvertEntityToModel(products);
+            var listToReturn = await PaginatedList<CatModel>.CreateAsync(paginatedProductsModel.AsNoTracking(), pageNumber ?? 1, pageSize);
 
-            if (!string.IsNullOrEmpty(description))
-            {
-                description = description.Trim();
-                products = products.Where(p => p.Description.Contains(description));
-            }
+            return listToReturn;
+        }
 
-            if (!string.IsNullOrEmpty(race))
-            {
-                race = race.Trim();
-                products = products.Where(p => p.Race.Contains(race));
-            }
-
-
-            var paginatedProductsModel = products
+        private IQueryable<CatModel> ConvertEntityToModel(IQueryable<Product> products)
+        {
+            return products
                 .Select(p => new CatModel
                 {
                     ProductId = p.ProductId,
@@ -57,10 +45,46 @@ namespace KittyShop.Repositories
                     EyesColor = p.EyesColor,
                     ImgUrlPath = p.ImgUrlPath
                 }).AsQueryable();
+        }
 
+        private IQueryable<Product> AddToQueryFurrFilter(string furrColor, IQueryable<Product> products)
+        {
+            if (furrColor != null) 
+            {
+                furrColor = furrColor.Trim();
+                products = products.Where(p => p.FurrColor.Contains(furrColor));
+            }
+            return products;
+        }
 
-            var listToReturn = await PaginatedList<CatModel>.CreateAsync(paginatedProductsModel.AsNoTracking(), pageNumber ?? 1, pageSize);
-            return listToReturn;
+        private IQueryable<Product> AddToQueryEyesFilter(string eyesColor, IQueryable<Product> products)
+        {
+            if (eyesColor != null)
+            {
+                eyesColor = eyesColor.Trim();
+                products = products.Where(p => p.EyesColor.Contains(eyesColor));
+            }
+            return products;
+        }
+
+        private IQueryable<Product> AddToQueryDescriptionFilter(string description, IQueryable<Product> products)
+        {
+            if (description != null)
+            {
+                description = description.Trim();
+                products = products.Where(p => p.Description.Contains(description));
+            }
+            return products;
+        }
+
+        private IQueryable<Product> AddToQueryRaceFilter(string race, IQueryable<Product> products)
+        {
+            if (race != null)
+            {
+                race = race.Trim();
+                products = products.Where(p => p.Race.Contains(race));
+            }
+            return products;
         }
 
         public async Task<bool> SaveChangesAsync()

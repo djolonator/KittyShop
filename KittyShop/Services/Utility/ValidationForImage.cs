@@ -13,19 +13,21 @@ namespace KittyShop.Services.Utility
         }
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
-
-            var property = validationContext.ObjectType.GetProperty(_imgUrlPath);
-            if (property == null)
+            var imgPath = string.Empty;
+            var prop = validationContext.ObjectInstance.GetType().GetProperty(_imgUrlPath);
+            
+            if (prop != null)
+                imgPath = prop.GetValue(validationContext.ObjectInstance)!.ToString();
+            
+            if (prop == null)
             {
                 return new ValidationResult($"Unknown property {_imgUrlPath}");
             }
-
-
-
+           
             int width = 0;
             int height = 0;
 
-            if (value == null && property == null)
+            if (value == null && imgPath == null)
             {
                 return new ValidationResult("You must upload image for product");
             }

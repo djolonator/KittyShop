@@ -32,12 +32,16 @@ namespace KittyShop.Services.Utility
 
         public bool ProductImageExists(string path)
         {
-            return File.Exists(path); 
+            
+            var wholePath = Path.Combine(_env.WebRootPath, path);
+            var doesExist = File.Exists(wholePath);
+            return doesExist;
         }
 
         public void DeleteProductImage(string path)
         {
-            File.Delete(path);
+            var wholePath = Path.Combine(_env.WebRootPath, path);
+            File.Delete(wholePath);
         }
     }
 }

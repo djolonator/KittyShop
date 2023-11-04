@@ -14,6 +14,7 @@ namespace KittyShop.Models
         public string FurrColor { get; set; } = null!;
 
         [Required]
+        [MaxLength(180)]
         public string Description { get; set; } = null!;
 
         [Required]

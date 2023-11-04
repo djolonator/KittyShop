@@ -19,7 +19,7 @@
                 @{
                     if (ViewBag.UserType == "Admin")
                     {
-                        <a href="/Admin/AddShopItem" class="btn btn-primary" role="button">Add item</a>
+                        <a href="/Admin/AddShopItem" class="btn btn-success" role="button">Add item</a>
                     }
                 }
         </div>
@@ -44,7 +44,7 @@
 </form>
 
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center gy-5">
 
         @foreach (var cat in Model)
         {
@@ -60,18 +60,19 @@
     var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
-
-<a asp-controller="Home" asp-action="ShopItemList"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex - 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @prevDisabled">
-    Previous
-</a>
-<a asp-controller="Home" asp-action="ShopItemList"
-   asp-route-sortOrder="@ViewData["CurrentSort"]"
-   asp-route-pageNumber="@(Model.PageIndex + 1)"
-   asp-route-currentFilter="@ViewData["CurrentFilter"]"
-   class="btn btn-default @nextDisabled">
-    Next
-</a>
+<div class="paginationButtonsDiv">
+    <a asp-controller="Home" asp-action="ShopItemList"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-pageNumber="@(Model.PageIndex - 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-default @prevDisabled">
+        Previous
+    </a>
+    <a asp-controller="Home" asp-action="ShopItemList"
+       asp-route-sortOrder="@ViewData["CurrentSort"]"
+       asp-route-pageNumber="@(Model.PageIndex + 1)"
+       asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       class="btn btn-default @nextDisabled">
+        Next
+    </a>
+</div>

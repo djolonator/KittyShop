@@ -78,6 +78,8 @@ namespace KittyShop.Services
 
             if (userToEdit.NewPassword != null)
                 userToEdit!.Password = _cipherService.Encrypt(userToEdit.NewPassword);
+            else
+                userToEdit!.Password = _cipherService.Encrypt(userToEdit.Password);
 
             if (userToEdit.NewEmail != null)
             {

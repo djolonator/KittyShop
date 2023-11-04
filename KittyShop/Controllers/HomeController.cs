@@ -114,7 +114,7 @@ namespace KittyShop.Controllers
 
         [HttpPost]
         public async Task<IActionResult> EditProfile(EditProfileModel user)
-        {
+        {   //ispisati poruku da je editovano
             try
             {
                 if (ModelState.IsValid)
@@ -129,7 +129,7 @@ namespace KittyShop.Controllers
                 _logger.LogCritical($"User could not be edited", ex);
             }
 
-            return RedirectToAction("Fail");
+            return RedirectToAction("EditProfile");
         }
 
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 

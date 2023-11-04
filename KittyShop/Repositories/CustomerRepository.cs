@@ -1,7 +1,5 @@
 ﻿using KittyShop.Data.DBContext;
-using KittyShop.Data.Entities;
 using KittyShop.Interfaces.IRepositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace KittyShop.Repositories
 {
@@ -12,6 +10,5 @@ namespace KittyShop.Repositories
        {
             _context = context;
        }
-        
     }
 }
