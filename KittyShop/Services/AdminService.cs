@@ -26,43 +26,45 @@ namespace KittyShop.Services
             var productEntity = _mapper.Map<Product>(productModel);
             productEntity.ImgUrlPath = imagePath;
 
-            await _adminRepository.AddProductAsync(productEntity);
+            var isSaved = await _adminRepository.AddProductAsync(productEntity);
 
-            return "bla";
+            return isSaved ? MessagesConstants.ProductAddSuccess : MessagesConstants.ProductAddFail;
         }
 
-        public async Task<(CatModel product, string message)> EditProductAsync(CatModel product)
+        public async Task<string> EditProductAsync(CatModel product)
         {
-            var message = string.Empty;
-
-            if (product.Image != null)
-            {
-                if (_imageService.ProductImageExists(product.ImgUrlPath!))
-                    _imageService.DeleteProductImage(product.ImgUrlPath!);
-
-                product.ImgUrlPath = await _imageService.SaveProductImageToProjectFolder(product.Image);
-            }
-
+            var message = MessagesConstants.SomethingWentWrong;
             var entityToUpdate = await _adminRepository.FindProductByIdAsync(product.ProductId);
 
             if (entityToUpdate != null)
             {
-                _mapper.Map(product, entityToUpdate);
-                if (!await _adminRepository.SaveChangesAsync())
-                    message = "There was an error editing product";
-            }
+                if (product.Image != null)
+                {
+                    if (_imageService.ProductImageExists(product.ImgUrlPath!))
+                        _imageService.DeleteProductImage(product.ImgUrlPath!);
 
-            return (product, message);
+                    product.ImgUrlPath = await _imageService.SaveProductImageToProjectFolder(product.Image);
+                }
+
+                _mapper.Map(product, entityToUpdate);
+
+                var isEdited = await _adminRepository.SaveChangesAsync();
+                    message = isEdited ? MessagesConstants.ProductEditSuccess : MessagesConstants.ProductEditFail;
+            }
+            else
+                message = MessagesConstants.ProductDoesNotExist;
+
+            return message;
         }
 
         public async Task<(CatModel? product, string message)> FindProductAsync(int productId)
         {
-            var message = string.Empty;
+            var message = MessagesConstants.SomethingWentWrong;
             var entity = await _adminRepository.FindProductByIdAsync(productId);
             var product = _mapper.Map<CatModel>(entity);
 
-            if (product == null)
-                message = "Product could not be found";
+            if (entity == null)
+                message = MessagesConstants.ProductDoesNotExist;
 
             return (product, message);
         }

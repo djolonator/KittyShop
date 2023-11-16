@@ -15,11 +15,17 @@ namespace KittyShop.Services.Utility
         {
             var imgPath = string.Empty;
             var prop = validationContext.ObjectInstance.GetType().GetProperty(_imgUrlPath);
-            
+
             if (prop != null)
-                imgPath = prop.GetValue(validationContext.ObjectInstance)!.ToString();
-            
-            if (prop == null)
+            {
+                var imgPathProperty = prop.GetValue(validationContext.ObjectInstance);
+
+                if (imgPathProperty != null)
+                {
+                    imgPath = imgPathProperty.ToString();
+                }
+            }
+            else
             {
                 return new ValidationResult($"Unknown property {_imgUrlPath}");
             }
@@ -27,7 +33,7 @@ namespace KittyShop.Services.Utility
             int width = 0;
             int height = 0;
 
-            if (value == null && imgPath == null)
+            if (value == null && string.IsNullOrEmpty(imgPath))
             {
                 return new ValidationResult("You must upload image for product");
             }

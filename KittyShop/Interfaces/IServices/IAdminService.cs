@@ -7,7 +7,7 @@ namespace KittyShop.Interfaces.IServices
     public interface IAdminService
     {
         Task<string> AddProductAsync(CatModel product);
-        Task<(CatModel product, string message)> EditProductAsync(CatModel product);
+        Task<string> EditProductAsync(CatModel product);
         Task<(CatModel? product, string message)> FindProductAsync(int productId);
 
     }

@@ -15,13 +15,13 @@ namespace KittyShop.Repositories
 
         public async Task<bool> SaveChangesAsync()
         {
-            return (await _context.SaveChangesAsync() >= 0);
+            return (await _context.SaveChangesAsync() > 0);
         }
 
-        public async Task AddProductAsync(Product product)
+        public async Task<bool> AddProductAsync(Product product)
         {
             await _context.Products.AddAsync(product);
-            await SaveChangesAsync();
+            return await SaveChangesAsync();
         }
 
         public async Task<Product?> FindProductByIdAsync(int productId)

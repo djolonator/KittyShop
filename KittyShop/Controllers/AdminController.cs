@@ -1,4 +1,5 @@
 ﻿using AutoMapper.Configuration.Annotations;
+using KittyShop.Data.Entities;
 using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -10,18 +11,16 @@ namespace KittyShop.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
+        private readonly ILogger<HomeController> _logger;
         private readonly IAdminService _adminService;
-        public AdminController(IAdminService adminService) 
+        public AdminController(ILogger<HomeController> logger, IAdminService adminService) 
         {
             _adminService = adminService;
+            _logger = logger;
         }
         
         public async Task<IActionResult> Index()
         {
-            //var nameclaim = User.Claims.FirstOrDefault(c => c.Type == "Name");
-            //var shopclaim = User.Claims.FirstOrDefault(c => c.Type == "Shop");
-            //var adminclaim = User.Claims.FirstOrDefault(c => c.Type == "Admin");
-
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == "Role");
             return View();
         }
@@ -34,38 +33,56 @@ namespace KittyShop.Controllers
         [HttpPost]
         public async Task<IActionResult> AddShopItem(CatModel cat)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var result = await _adminService.AddProductAsync(cat);
-                return RedirectToAction("ShopItemList", "Home");
-            }    
-
-            return View(cat);
+                if (ModelState.IsValid)
+                {
+                    var result = await _adminService.AddProductAsync(cat);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
+            }
+            //result nosi poruku za korisnika sweetalert
+            return RedirectToAction("ShopItemList", "Home");
         }
       
         public async Task<IActionResult> EditShopItem(int productId)
         {
-            var product = await _adminService.FindProductAsync(productId);
-
-            if (product.product == null)
+            try
             {
-                TempData["Message"] = product.message;
-            }
+                var result = await _adminService.FindProductAsync(productId);
 
-            return View(product.product);
+                if (result.product != null)
+                {
+                    return View(result.product);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Edit shop item page failed to load. Code exited with message {ex.Message} at {ex.StackTrace}");
+            }
+            //result.message nosi poruku za korisnika sweetalert
+            return RedirectToAction("ShopItemList", "Home");
         }
 
         [HttpPost]
         public async Task<IActionResult> EditShopItem(CatModel product)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var result = await _adminService.EditProductAsync(product);
-                ViewData["Message"] = result.message;
-                product = result.product;
+                if (ModelState.IsValid)
+                {
+                    var result = await _adminService.EditProductAsync(product);
+                }
             }
-
-            return View(product);
+            catch(Exception ex)
+            {
+                _logger.LogCritical($"Edit shop item failed. Code exited with message {ex.Message} at {ex.StackTrace}");
+            }
+            //result nosi poruku za korisnika
+            return RedirectToAction("ShopItemList", "Home");
         }
     }
 }

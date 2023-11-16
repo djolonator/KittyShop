@@ -35,38 +35,39 @@ namespace KittyShop.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel user)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var result = await _homeService.Login(user);
-
-                if (result.message == string.Empty)
+                if (ModelState.IsValid)
                 {
-                    //var claims = new List<Claim>{new Claim("User", result.user.Type.ToString()),
-                    //        new Claim("Admin", result.user.UserName),
-                    //    };
+                    var result = await _homeService.Login(user);
 
-                    var claims = new List<Claim>{
+                    if (result.message == string.Empty)
+                    {
+                        var claims = new List<Claim>{
                         new Claim(ClaimTypes.Role, result.user.Type.ToString()),
                         new Claim(ClaimTypes.Name, result.user.UserName),
                         new Claim(ClaimTypes.SerialNumber, result.user.UserId.ToString())};
-                    
-                    var claimsIdentity = new ClaimsIdentity(
-                    claims, "Login");
 
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                            new ClaimsPrincipal(claimsIdentity));
+                        var claimsIdentity = new ClaimsIdentity(
+                        claims, "Login");
 
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                                new ClaimsPrincipal(claimsIdentity));
 
-
-                    if (result.user.Type.ToString() == "Admin")
-                        return RedirectToAction("Index", "Admin");
+                        if (result.user.Type.ToString() == "Admin")
+                            return RedirectToAction("Index", "Admin");
+                        else
+                            return RedirectToAction("Index", "Shop");
+                    }
                     else
-                        return RedirectToAction("Index", "Shop");
+                    {
+                        ViewData["message"] = $"{result.message}";
+                    }
                 }
-                else
-                {
-                    ViewData["message"] = result.message;
-                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"User could not be created", ex);
             }
 
             return View(user);
