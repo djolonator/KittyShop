@@ -92,10 +92,10 @@ namespace KittyShop.Repositories
             return (await _context.SaveChangesAsync() >= 0);
         }
 
-        public async Task CreateUserAsync(User user)
+        public async Task<bool> CreateUserAsync(User user)
         {
             await _context.Users.AddAsync(user);
-            var id = await SaveChangesAsync();
+            return await SaveChangesAsync();
         }
 
         public async Task<bool> UserNameExistsAsync(string userName)

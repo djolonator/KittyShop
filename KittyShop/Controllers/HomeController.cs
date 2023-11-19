@@ -1,4 +1,5 @@
-﻿using KittyShop.Interfaces.IServices;
+﻿using KittyShop.Data.Entities;
+using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
 using KittyShop.Services.Utility;
 using Microsoft.AspNetCore.Authentication;
@@ -40,37 +41,44 @@ namespace KittyShop.Controllers
                 if (ModelState.IsValid)
                 {
                     var result = await _homeService.Login(user);
+                    //result.message ide u alert
+                    ViewData["Message"] = result.message;
 
-                    if (result.message == string.Empty)
+                    if (result.user != null)
                     {
-                        var claims = new List<Claim>{
-                        new Claim(ClaimTypes.Role, result.user.Type.ToString()),
-                        new Claim(ClaimTypes.Name, result.user.UserName),
-                        new Claim(ClaimTypes.SerialNumber, result.user.UserId.ToString())};
-
-                        var claimsIdentity = new ClaimsIdentity(
-                        claims, "Login");
-
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                                new ClaimsPrincipal(claimsIdentity));
-
+                        await SignInUser(MakeClaims(result.user));
+                        
                         if (result.user.Type.ToString() == "Admin")
                             return RedirectToAction("Index", "Admin");
                         else
                             return RedirectToAction("Index", "Shop");
                     }
-                    else
-                    {
-                        ViewData["message"] = $"{result.message}";
-                    }
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"User could not be created", ex);
+                _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
-
             return View(user);
+        }
+
+        private ClaimsIdentity MakeClaims(User user)
+        {
+            var claims = new List<Claim>{
+                        new Claim(ClaimTypes.Role, user.Type.ToString()),
+                        new Claim(ClaimTypes.Name, user.UserName),
+                        new Claim(ClaimTypes.SerialNumber, user.UserId.ToString())};
+
+            var claimsIdentity = new ClaimsIdentity(
+            claims, "Login");
+
+            return claimsIdentity;
+        }
+
+        private async Task SignInUser(ClaimsIdentity claimsIdentity)
+        {
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
         }
 
         [HttpGet]
@@ -88,34 +96,49 @@ namespace KittyShop.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterUser(RegisterModel user)
+        public async Task<IActionResult> Register(RegisterModel user)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    await _homeService.RegisterUser(user);
+                    var result = await _homeService.RegisterUser(user);
+                    if (result.isRegisterSuccess)
+                        return RedirectToAction("Login");
+                    //result.message ide u notyf
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"User could not be created", ex);
+                _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
 
-            return RedirectToAction("Fail");
+            //return RedirectToAction("Login");
+
+            return View(user);
         }
 
         public async Task<IActionResult> EditProfile()
         {
-            var identity = (ClaimsIdentity)User.Identity!;
-            var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
-            var model = await _homeService.GetUserAsync(userId);
-            return View(model);
+            try
+            {
+                var identity = (ClaimsIdentity)User.Identity!;
+                var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
+                var result = await _homeService.GetUserAsync(userId);
+                if (!string.IsNullOrEmpty(result.user.UserName))
+                    return View(result.user);
+            }
+            catch(Exception ex) 
+            {
+                _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
+            }
+               
+            return RedirectToAction("Login");
         }
 
         [HttpPost]
         public async Task<IActionResult> EditProfile(EditProfileModel user)
-        {   //ispisati poruku da je editovano
+        {   
             try
             {
                 if (ModelState.IsValid)

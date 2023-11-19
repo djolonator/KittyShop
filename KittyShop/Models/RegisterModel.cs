@@ -15,5 +15,7 @@ namespace KittyShop.Models
         public string ConfirmPassword { get; set; } = string.Empty;
 
         public string? Email { get; set; }
+
+        public UserTypes Type { get; set; }
     }
 }

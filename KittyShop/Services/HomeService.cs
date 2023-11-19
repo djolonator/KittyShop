@@ -7,13 +7,13 @@ using KittyShop.Services.Utility;
 
 namespace KittyShop.Services
 {
-    public class HomeService: IHomeService
+    public class HomeService : IHomeService
     {
         private readonly IHomeRepository _homeRepository;
         private readonly CipherService _cipherService;
         private readonly IMapper _mapper;
 
-        public HomeService(IHomeRepository homeRepository, CipherService cipherService, IMapper mapper) 
+        public HomeService(IHomeRepository homeRepository, CipherService cipherService, IMapper mapper)
         {
             _homeRepository = homeRepository;
             _cipherService = cipherService;
@@ -28,34 +28,81 @@ namespace KittyShop.Services
             return products;
         }
 
-        public async Task RegisterUser(RegisterModel model)
+        public async Task<(bool isRegisterSuccess, string message)> RegisterUser(RegisterModel model)
         {
-            var encryptedPassword = _cipherService.Encrypt(model.Password);
-            model.Password = encryptedPassword;
+            bool isAuthenticated = await AuthenticateRegister(model);
+            bool isCreated = await CreateUser(model);
+            bool isRegisterSuccess = false;
+            string message = string.Empty;
+
+            if (isAuthenticated && isCreated)
+            {
+                isRegisterSuccess = true;
+                message = MessagesConstants.RegisterSuccess;
+            }
+            else if (!isAuthenticated)
+                message = MessagesConstants.UserNameTaken;
+
+            return (isRegisterSuccess, message);    
+        }
+
+        private async Task<bool> AuthenticateRegister(RegisterModel model)
+        {
+            return !await _homeRepository.UserNameExistsAsync(model.UserName);
+        }
+
+        private async Task<bool> CreateUser(RegisterModel model)
+        {
+            model.Password = SetPasswordForRegister(model.Password);
+            model.Type = Enums.UserTypes.Regular;
             var entity = _mapper.Map<User>(model);
-            entity.Type = Enums.UserTypes.Regular;
-            await _homeRepository.CreateUserAsync(entity);
+
+            return await _homeRepository.CreateUserAsync(entity);
         }
 
-        public async Task<(User user, string message)> Login(LoginModel model)
+        private string SetPasswordForRegister(string password)
         {
-            if (!await _homeRepository.UserNameExistsAsync(model.UserName))
-                return (new User(), "User with that user name does not exist");
-
-            var user = await _homeRepository.FindUserByNameAsync(model.UserName);
-
-            if (_cipherService.Decrypt(user!.Password) != model.Password)
-                return (new User(), $"Password for {user.UserName} is incorect");
-
-            return (user, string.Empty);
+            return _cipherService.Encrypt(password);
         }
 
-        public async Task<EditProfileModel> GetUserAsync(int userId)
+        public async Task<(User? user, string message)> Login(LoginModel model)
         {
+            var message = MessagesConstants.WrongLoginCredentials;
+            var isAuthenticated = await AuthenticateLogin(model.UserName, model.Password);
+
+            if (isAuthenticated.verdict)
+                message = MessagesConstants.LoggedInSuccess;
+
+            return (isAuthenticated.user, message);
+        }
+
+        private async Task<(bool verdict, User? user)> AuthenticateLogin(string userName, string password)
+        {
+            bool verdict = false;
+            var user = await _homeRepository.FindUserByNameAsync(userName);
+
+            if (user != null && _cipherService.Decrypt(user!.Password) == password)
+                verdict = true;
+            else
+                verdict = false;
+
+            return (verdict, user);
+        }
+
+        public async Task<(EditProfileModel user, string message)> GetUserAsync(int userId)
+        {
+            string message = string.Empty;
+            var model = new EditProfileModel();
             var user = await _homeRepository.FindUserByIdAsync(userId);
-            var model = _mapper.Map<EditProfileModel>(user);
-            model.Password = _cipherService.Decrypt(model.Password!);
-            return model;
+            if (user == null)
+                message = MessagesConstants.SomethingWentWrong;
+            else
+            {
+                model = _mapper.Map<EditProfileModel>(user);
+                model.Password = _cipherService.Decrypt(model.Password!);
+            }
+            
+            return (model, message);
         }
 
         public async Task<string> EditProfile(EditProfileModel userToEdit, int userId)
@@ -87,7 +134,7 @@ namespace KittyShop.Services
 
                 //napraviti metodu za findUserByEmail i proveriti da li postoji
             }
-                
+
 
             _mapper.Map(userToEdit, entityToUpdate);
 
@@ -95,7 +142,7 @@ namespace KittyShop.Services
 
 
             return result;
-            
+
         }
     }
 }

@@ -10,7 +10,7 @@ namespace KittyShop.Interfaces.IRepositories
             string description, string race, int? pageNumber, int pageSize);
 
         Task<bool> SaveChangesAsync();
-        Task CreateUserAsync(User user);
+        Task <bool> CreateUserAsync(User user);
         Task<bool> UserNameExistsAsync(string userName);
         Task<User?> FindUserByIdAsync(int userId);
         Task<User?> FindUserByNameAsync(string userName);
