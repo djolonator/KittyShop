@@ -30,7 +30,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 //builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<KittyShopContext>(dbContextOptions => dbContextOptions.UseSqlServer(
-	builder.Configuration["ConnectionStrings:AZURE_SQL_CONNECTIONSTRING"], optionAction =>
+	builder.Configuration["ConnectionStrings:KittyShopDBConnectionString"], optionAction =>
      optionAction.EnableRetryOnFailure(
                 maxRetryCount: 5,
                 maxRetryDelay: TimeSpan.FromSeconds(30),

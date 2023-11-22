@@ -145,7 +145,10 @@ namespace KittyShop.Controllers
                 {
                     var identity = (ClaimsIdentity)User.Identity!;
                     var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
-                    var rt = await _homeService.EditProfile(user, userId);
+                    var result = await _homeService.EditProfile(user, userId);
+
+                    if (!result.isEdited)
+                        return View(user);
                 }
             }
             catch (Exception ex)
@@ -153,17 +156,25 @@ namespace KittyShop.Controllers
                 _logger.LogCritical($"User could not be edited", ex);
             }
 
-            return RedirectToAction("EditProfile");
+            return RedirectToAction("Logout");
         }
 
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 
             string description, string race, int? pageNumber)
         {
-            int pageSize = 3;
-            var products = await _homeService.GetProductsAsync(furrColor, 
-                eyesColor, description, race, pageNumber, pageSize);
-            
-            return View(products);
+            int pageSize = 6;
+
+            try
+            {
+                var products = await _homeService.GetProductsAsync(furrColor,
+                    eyesColor, description, race, pageNumber, pageSize);
+
+                return View(products);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"User could not be edited", ex);
+            }
         }
     }
 }

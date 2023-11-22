@@ -11,6 +11,6 @@ namespace KittyShop.Interfaces.IServices
         public Task<(bool isRegisterSuccess, string message)> RegisterUser(RegisterModel model);
         Task<(User? user, string message)> Login(LoginModel model);
         Task<(EditProfileModel user, string message)> GetUserAsync(int userId);
-        Task<string> EditProfile(EditProfileModel userToEdit, int userId);
+        Task<(bool isEdited, string message)> EditProfile(EditProfileModel userToEdit, int userId);
     }
 }

@@ -15,7 +15,6 @@ namespace KittyShop.Repositories
             _context = context;
         }
 
-
         public async Task<PaginatedList<CatModel>> GetProducts(string furrColor, string eyesColor,
             string description, string race, int? pageNumber, int pageSize)
         {

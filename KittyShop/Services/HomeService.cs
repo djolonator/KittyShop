@@ -99,50 +99,44 @@ namespace KittyShop.Services
             else
             {
                 model = _mapper.Map<EditProfileModel>(user);
-                model.Password = _cipherService.Decrypt(model.Password!);
             }
             
             return (model, message);
         }
 
-        public async Task<string> EditProfile(EditProfileModel userToEdit, int userId)
+        public async Task<(bool isEdited, string message)> EditProfile(EditProfileModel userToEdit, int userId)
         {
-            string result = string.Empty;
+            string message = MessagesConstants.SomethingWentWrong;
+            bool isEdited = false;
             var entityToUpdate = await _homeRepository.FindUserByIdAsync(userId);
-            if (userToEdit.NewUserName != null)
+            if (entityToUpdate != null)
             {
-                var userNameExists = await _homeRepository.UserNameExistsAsync(userToEdit.NewUserName);
-
-                if (userNameExists)
+                if (userToEdit.NewUserName != null)
                 {
-                    return $"Username {userToEdit.NewUserName} is not available";
+                    var userNameExists = await _homeRepository.UserNameExistsAsync(userToEdit.NewUserName);
+
+                    if (userNameExists)
+                    {
+                        message = MessagesConstants.UserNameTaken;
+                    }
+                    else
+                    {
+                        userToEdit!.UserName = userToEdit.NewUserName!;
+                    }
                 }
-                else
-                {
-                    userToEdit!.UserName = userToEdit.NewUserName!;
-                }
+
+                if (userToEdit.NewPassword != null)
+                    userToEdit!.Password = _cipherService.Encrypt(userToEdit.NewPassword);
+
+                if (userToEdit.NewEmail != null)
+                    userToEdit!.Email = userToEdit.NewEmail;
             }
-
-            if (userToEdit.NewPassword != null)
-                userToEdit!.Password = _cipherService.Encrypt(userToEdit.NewPassword);
-            else
-                userToEdit!.Password = _cipherService.Encrypt(userToEdit.Password);
-
-            if (userToEdit.NewEmail != null)
-            {
-                userToEdit!.Email = userToEdit.NewEmail;
-
-                //napraviti metodu za findUserByEmail i proveriti da li postoji
-            }
-
 
             _mapper.Map(userToEdit, entityToUpdate);
 
-            await _homeRepository.SaveChangesAsync();
+            isEdited = await _homeRepository.SaveChangesAsync();
 
-
-            return result;
-
+            return (isEdited, message);
         }
     }
 }

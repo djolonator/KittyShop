@@ -11,6 +11,7 @@
         
         public const string RegisterFail = "User could not be created!";
         public const string RegisterSuccess = "Registered!";
+        public const string UseEdited = "User successfully edited";
 
         public const string ProductAddSuccess = "Product successfully added!";
         public const string ProductAddFail = "Failed to add product!";
