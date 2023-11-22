@@ -13,7 +13,8 @@
 
 @{
     var identity = (ClaimsIdentity)User.Identity!;
-    var role = identity.FindFirst(ClaimTypes.Role)!.Value;
+    //var role = identity.FindFirst(ClaimTypes.Role)!.Value;
+    var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault()!.Value;
 }
 
 <body>

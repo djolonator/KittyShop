@@ -1,10 +1,11 @@
 ﻿@using KittyShop.Services.Utility;
+@using System.Security.Claims;
 @model PaginatedList<CatModel>
 
 @{
     ViewBag.UserType = string.Empty;
 
-    if (User.Claims!.FirstOrDefault()!.Value == "Regular")
+    if (User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault()!.Value == "Regular")
         ViewBag.UserType = "Regular";
     else
         ViewBag.UserType = "Admin";

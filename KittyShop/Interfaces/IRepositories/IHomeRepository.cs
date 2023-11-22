@@ -6,9 +6,7 @@ namespace KittyShop.Interfaces.IRepositories
 {
     public interface IHomeRepository
     {
-        Task<PaginatedList<CatModel>> GetProducts(string furrColor, string eyesColor,
-            string description, string race, int? pageNumber, int pageSize);
-
+        public IQueryable<Product> GetAllProductsAsQueryable();
         Task<bool> SaveChangesAsync();
         Task <bool> CreateUserAsync(User user);
         Task<bool> UserNameExistsAsync(string userName);

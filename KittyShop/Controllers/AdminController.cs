@@ -4,6 +4,7 @@ using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace KittyShop.Controllers
 {
@@ -21,7 +22,7 @@ namespace KittyShop.Controllers
         
         public async Task<IActionResult> Index()
         {
-            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == "Role");
+            var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
             return View();
         }
 

@@ -162,19 +162,25 @@ namespace KittyShop.Controllers
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 
             string description, string race, int? pageNumber)
         {
-            int pageSize = 6;
-
+            int pageSize = 5;
+            var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
+            
             try
             {
                 var products = await _homeService.GetProductsAsync(furrColor,
                     eyesColor, description, race, pageNumber, pageSize);
 
-                return View(products);
+                if (products != null)
+                {
+                    return View(products);
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"User could not be edited", ex);
             }
+            //var rt = MessagesConstants.SomethingWentWrong; u notyf
+            return roleClaim!.Value == "Admin" ? RedirectToAction("Index", "Admin") : RedirectToAction("Index", "Shop");
         }
     }
 }

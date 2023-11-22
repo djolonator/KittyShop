@@ -15,75 +15,9 @@ namespace KittyShop.Repositories
             _context = context;
         }
 
-        public async Task<PaginatedList<CatModel>> GetProducts(string furrColor, string eyesColor,
-            string description, string race, int? pageNumber, int pageSize)
+        public IQueryable<Product> GetAllProductsAsQueryable()
         {
-            var products = _context.Products as IQueryable<Product>;
-
-            products = AddToQueryFurrFilter(furrColor, products);
-            products = AddToQueryEyesFilter(eyesColor, products);
-            products = AddToQueryDescriptionFilter(description, products);
-            products = AddToQueryRaceFilter(race, products);
-
-            var paginatedProductsModel = ConvertEntityToModel(products);
-            var listToReturn = await PaginatedList<CatModel>.CreateAsync(paginatedProductsModel.AsNoTracking(), pageNumber ?? 1, pageSize);
-
-            return listToReturn;
-        }
-
-        private IQueryable<CatModel> ConvertEntityToModel(IQueryable<Product> products)
-        {
-            return products
-                .Select(p => new CatModel
-                {
-                    ProductId = p.ProductId,
-                    Race = p.Race,
-                    FurrColor = p.FurrColor,
-                    Description = p.Description,
-                    Price = p.Price,
-                    EyesColor = p.EyesColor,
-                    ImgUrlPath = p.ImgUrlPath
-                }).AsQueryable();
-        }
-
-        private IQueryable<Product> AddToQueryFurrFilter(string furrColor, IQueryable<Product> products)
-        {
-            if (furrColor != null) 
-            {
-                furrColor = furrColor.Trim();
-                products = products.Where(p => p.FurrColor.Contains(furrColor));
-            }
-            return products;
-        }
-
-        private IQueryable<Product> AddToQueryEyesFilter(string eyesColor, IQueryable<Product> products)
-        {
-            if (eyesColor != null)
-            {
-                eyesColor = eyesColor.Trim();
-                products = products.Where(p => p.EyesColor.Contains(eyesColor));
-            }
-            return products;
-        }
-
-        private IQueryable<Product> AddToQueryDescriptionFilter(string description, IQueryable<Product> products)
-        {
-            if (description != null)
-            {
-                description = description.Trim();
-                products = products.Where(p => p.Description.Contains(description));
-            }
-            return products;
-        }
-
-        private IQueryable<Product> AddToQueryRaceFilter(string race, IQueryable<Product> products)
-        {
-            if (race != null)
-            {
-                race = race.Trim();
-                products = products.Where(p => p.Race.Contains(race));
-            }
-            return products;
+            return _context.Products;
         }
 
         public async Task<bool> SaveChangesAsync()
