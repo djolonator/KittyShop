@@ -21,13 +21,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options =>
     {
         
-        options.ExpireTimeSpan = TimeSpan.FromDays(1); //ako ovo istekne, puca apliakcija
-        options.SlidingExpiration = true;   //ovo ga produzava ako ima requestova
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+        options.SlidingExpiration = true; 
         options.LoginPath = new PathString("/Home/Login");
         options.AccessDeniedPath = new PathString("/Home/Login");
     });
 
-//builder.Services.AddAuthorization();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<KittyShopContext>(dbContextOptions => dbContextOptions.UseSqlServer(
 	builder.Configuration["ConnectionStrings:KittyShopDBConnectionString"], optionAction =>

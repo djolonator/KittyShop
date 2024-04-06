@@ -33,7 +33,7 @@ namespace KittyShop.Services
 
         public async Task<string> EditProductAsync(CatModel product)
         {
-            var message = MessagesConstants.SomethingWentWrong;
+            string message = string.Empty;
             var entityToUpdate = await _adminRepository.FindProductByIdAsync(product.ProductId);
 
             if (entityToUpdate != null)
@@ -59,7 +59,7 @@ namespace KittyShop.Services
 
         public async Task<(CatModel? product, string message)> FindProductAsync(int productId)
         {
-            var message = MessagesConstants.SomethingWentWrong;
+            string message = string.Empty;
             var entity = await _adminRepository.FindProductByIdAsync(productId);
             var product = _mapper.Map<CatModel>(entity);
 
@@ -68,6 +68,17 @@ namespace KittyShop.Services
 
             return (product, message);
         }
-        
+
+        public async Task<string> DeleteProductAsync(int productId)
+        {
+            string message = string.Empty;
+            var isDeleted = await _adminRepository.DeleteProductAsync(new Product() { ProductId = productId});
+
+            if (isDeleted)
+                message = MessagesConstants.ProductDeleteSuccess;
+            else message = MessagesConstants.ProductDeleteFail;
+
+            return message;
+        }
     }
 }

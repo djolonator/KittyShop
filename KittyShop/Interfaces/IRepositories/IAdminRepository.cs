@@ -7,7 +7,7 @@ namespace KittyShop.Interfaces.IRepositories
         Task<bool> SaveChangesAsync();
         Task<bool> AddProductAsync(Product product);
         Task<Product?> FindProductByIdAsync(int productId);
-
+        Task<bool> DeleteProductAsync(Product product);
 
     }
 }

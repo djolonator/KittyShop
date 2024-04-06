@@ -28,5 +28,11 @@ namespace KittyShop.Repositories
         {
             return await _context.Products.FindAsync(productId);
         }
+
+        public async Task<bool> DeleteProductAsync(Product product)
+        {
+            _context.Products.Remove(product);
+            return await SaveChangesAsync();
+        }
     }
 }

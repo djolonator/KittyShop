@@ -132,7 +132,7 @@ namespace KittyShop.Controllers
             {
                 _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
-               
+            //result.message ide u notyf
             return RedirectToAction("Login");
         }
 
@@ -177,7 +177,7 @@ namespace KittyShop.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"User could not be edited", ex);
+                _logger.LogCritical($"User could not be edited.Code exited with message {ex.Message} at {ex.StackTrace}", ex);
             }
             //var rt = MessagesConstants.SomethingWentWrong; u notyf
             return roleClaim!.Value == "Admin" ? RedirectToAction("Index", "Admin") : RedirectToAction("Index", "Shop");

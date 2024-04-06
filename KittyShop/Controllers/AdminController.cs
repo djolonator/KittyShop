@@ -38,12 +38,12 @@ namespace KittyShop.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _adminService.AddProductAsync(cat);
+                    var message = await _adminService.AddProductAsync(cat);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
+                _logger.LogCritical($"product could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
             //result nosi poruku za korisnika sweetalert
             return RedirectToAction("ShopItemList", "Home");
@@ -62,7 +62,7 @@ namespace KittyShop.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Edit shop item page failed to load. Code exited with message {ex.Message} at {ex.StackTrace}");
+                _logger.LogCritical($"Edit product page failed to load. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
             //result.message nosi poruku za korisnika sweetalert
             return RedirectToAction("ShopItemList", "Home");
@@ -75,12 +75,26 @@ namespace KittyShop.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var result = await _adminService.EditProductAsync(product);
+                    var message = await _adminService.EditProductAsync(product);
                 }
             }
             catch(Exception ex)
             {
-                _logger.LogCritical($"Edit shop item failed. Code exited with message {ex.Message} at {ex.StackTrace}");
+                _logger.LogCritical($"Edit product failed. Code exited with message {ex.Message} at {ex.StackTrace}");
+            }
+            //result nosi poruku za korisnika
+            return RedirectToAction("ShopItemList", "Home");
+        }
+
+        public async Task<IActionResult> DeleteProduct(int productId)
+        {
+            try
+            {
+                var message = await _adminService.DeleteProductAsync(productId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Edit delete product failed. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
             //result nosi poruku za korisnika
             return RedirectToAction("ShopItemList", "Home");

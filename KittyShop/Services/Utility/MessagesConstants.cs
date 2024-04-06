@@ -18,5 +18,8 @@
         public const string ProductDoesNotExist = "Product could not be found";
         public const string ProductEditFail = "There was an error editing product";
         public const string ProductEditSuccess = "Product successfully edited!";
+
+        public const string ProductDeleteSuccess = "Product successfully deleted!";
+        public const string ProductDeleteFail = "Failed to delete the product!";
     }
 }

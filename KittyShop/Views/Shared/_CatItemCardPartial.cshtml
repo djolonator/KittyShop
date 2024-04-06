@@ -12,7 +12,7 @@
             {
                 <div class="cardButtonDiv">
                     <a asp-controller="Admin" asp-action="EditShopItem" asp-route-productId="@Model.ProductId" class="btn btn-primary btn-sm">Edit product</a>
-                    <a class="btn btn-danger btn-sm">Remove product</a>
+                    <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-productId="@Model.ProductId" class="btn btn-danger btn-sm">Delete product</a>
                 </div>
             }
             else
