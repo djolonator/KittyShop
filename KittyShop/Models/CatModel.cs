@@ -1,4 +1,4 @@
-﻿using KittyShop.Services.Utility;
+﻿using KittyShop.Utility;
 using System.ComponentModel.DataAnnotations;
 
 namespace KittyShop.Models

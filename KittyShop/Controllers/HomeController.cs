@@ -1,7 +1,6 @@
 ﻿using KittyShop.Data.Entities;
 using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
-using KittyShop.Services.Utility;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;

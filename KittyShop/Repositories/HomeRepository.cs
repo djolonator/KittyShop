@@ -1,8 +1,6 @@
 ﻿using KittyShop.Data.DBContext;
 using KittyShop.Data.Entities;
 using KittyShop.Interfaces.IRepositories;
-using KittyShop.Models;
-using KittyShop.Services.Utility;
 using Microsoft.EntityFrameworkCore;
 
 namespace KittyShop.Repositories

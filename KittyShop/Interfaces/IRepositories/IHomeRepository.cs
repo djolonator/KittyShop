@@ -1,6 +1,5 @@
 ﻿using KittyShop.Data.Entities;
-using KittyShop.Models;
-using KittyShop.Services.Utility;
+
 
 namespace KittyShop.Interfaces.IRepositories
 {
