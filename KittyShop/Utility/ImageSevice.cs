@@ -1,5 +1,4 @@
-﻿
-namespace KittyShop.Services.Utility
+﻿namespace KittyShop.Utility
 {
     public class ImageSevice
     {
@@ -15,7 +14,7 @@ namespace KittyShop.Services.Utility
         {
             var imageName = MakeImageName(image);
             var path = Path.Combine(_env.WebRootPath, productImageFolderName, imageName);
-            
+
             using var stream = new FileStream(path, FileMode.Create);
             await image.CopyToAsync(stream);
 
@@ -24,7 +23,7 @@ namespace KittyShop.Services.Utility
 
         private string MakeImageName(IFormFile image)
         {
-            var imageExtension = System.IO.Path.GetExtension(image.FileName);
+            var imageExtension = Path.GetExtension(image.FileName);
             var imageName = $"cat-{Guid.NewGuid()}{imageExtension}";
 
             return imageName;
@@ -32,7 +31,7 @@ namespace KittyShop.Services.Utility
 
         public bool ProductImageExists(string path)
         {
-            
+
             var wholePath = Path.Combine(_env.WebRootPath, path);
             var doesExist = File.Exists(wholePath);
             return doesExist;

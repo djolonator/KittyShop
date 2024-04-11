@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 
-namespace KittyShop.Services.Utility
+namespace KittyShop.Utility
 {
     public class ValidationForImage : ValidationAttribute
     {
@@ -29,7 +29,7 @@ namespace KittyShop.Services.Utility
             {
                 return new ValidationResult($"Unknown property {_imgUrlPath}");
             }
-           
+
             int width = 0;
             int height = 0;
 
@@ -42,7 +42,7 @@ namespace KittyShop.Services.Utility
 
             if (file != null)
             {
-                using (var image =  Image.Load(file.OpenReadStream()))
+                using (var image = Image.Load(file.OpenReadStream()))
                 {
                     width = image.Width;
                     height = image.Height;

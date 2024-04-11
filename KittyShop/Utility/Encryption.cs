@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace KittyShop.Services.Utility
+namespace KittyShop.Utility
 {
     public class Encryption
     {

@@ -1,6 +1,6 @@
 ﻿using KittyShop.Data.Entities;
 using KittyShop.Models;
-using KittyShop.Services.Utility;
+using KittyShop.Utility;
 
 namespace KittyShop.Interfaces.IServices
 {

@@ -3,7 +3,7 @@ using KittyShop.Data.Entities;
 using KittyShop.Interfaces.IRepositories;
 using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
-using KittyShop.Services.Utility;
+using KittyShop.Utility;
 
 namespace KittyShop.Services
 {

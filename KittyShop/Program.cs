@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationM
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
-using KittyShop.Services.Utility;
 using KittyShop.Services;
 using KittyShop.Interfaces.IServices;
 using KittyShop.Interfaces.IRepositories;
 using KittyShop.Repositories;
 using Serilog;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using KittyShop.Utility;
 
 
 var builder = WebApplication.CreateBuilder(args);

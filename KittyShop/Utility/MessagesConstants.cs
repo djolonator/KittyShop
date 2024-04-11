@@ -1,4 +1,4 @@
-﻿namespace KittyShop.Services.Utility
+﻿namespace KittyShop.Utility
 {
     public static class MessagesConstants
     {
@@ -8,7 +8,7 @@
         public const string LoggedInSuccess = "Logged in";
         public const string UserNameTaken = "User name allready exists!";
 
-        
+
         public const string RegisterFail = "User could not be created!";
         public const string RegisterSuccess = "Registered!";
         public const string UseEdited = "User successfully edited";

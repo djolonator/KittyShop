@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 
-namespace KittyShop.Services.Utility
+namespace KittyShop.Utility
 {
     public class CipherService
     {
