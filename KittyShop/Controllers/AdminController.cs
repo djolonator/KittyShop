@@ -43,7 +43,7 @@ namespace KittyShop.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"product could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
+                _logger.LogCritical($"Product could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
             //result nosi poruku za korisnika sweetalert
             return RedirectToAction("ShopItemList", "Home");

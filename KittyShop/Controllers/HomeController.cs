@@ -57,7 +57,7 @@ namespace KittyShop.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
+                _logger.LogCritical($"Failed to login. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
             return View(user);
         }
@@ -110,7 +110,7 @@ namespace KittyShop.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
+                _logger.LogCritical($"Failed to register. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
 
             //return RedirectToAction("Login");
@@ -130,7 +130,7 @@ namespace KittyShop.Controllers
             }
             catch(Exception ex) 
             {
-                _logger.LogCritical($"Shop item could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
+                _logger.LogCritical($"Failed to load edit profile page. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
             //result.message ide u notyf
             return RedirectToAction("Login");
@@ -153,7 +153,7 @@ namespace KittyShop.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"User could not be edited", ex);
+                _logger.LogCritical($"Failed to edit profile. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
 
             return RedirectToAction("Logout");
@@ -182,7 +182,7 @@ namespace KittyShop.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogCritical($"User could not be edited.Code exited with message {ex.Message} at {ex.StackTrace}", ex);
+                _logger.LogCritical($"Failed to load shop list page.Code exited with message {ex.Message} at {ex.StackTrace}", ex);
             }
             //var rt = MessagesConstants.SomethingWentWrong; u notyf
             return roleClaim!.Value == "Admin" ? RedirectToAction("Index", "Admin") : RedirectToAction("Index", "Shop");
