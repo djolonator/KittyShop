@@ -30,10 +30,10 @@
                         Filter
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li><input type="text" name="furrColor" placeholder="Furr color" /></li>
-                        <li><input type="text" name="eyesColor" placeholder="Eyes color" /></li>
-                        <li><input type="text" name="description" placeholder="Description" /></li>
-                        <li><input type="text" name="race" placeholder="Race" /></li>
+                        <li><input type="text" name="furrColor" value=@ViewData["furrColor"] placeholder="Furr color" /></li>
+                        <li><input type="text" name="eyesColor" value=@ViewData["eyesColor"] placeholder="Eyes color" /></li>
+                        <li><input type="text" name="description" value=@ViewData["description"] placeholder="Description" /></li>
+                        <li><input type="text" name="race" value=@ViewData["race"] placeholder="Race" /></li>
                     </ul>
                 </div>
                 <div>
@@ -66,6 +66,10 @@
        asp-route-sortOrder="@ViewData["CurrentSort"]"
        asp-route-pageNumber="@(Model.PageIndex - 1)"
        asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       asp-route-furrColor="@ViewData["furrColor"]"
+       asp-route-eyesColor="@ViewData["eyesColor"]"
+       asp-route-description="@ViewData["description"]"
+       asp-route-race="@ViewData["race"]"
        class="btn btn-default @prevDisabled">
         Previous
     </a>
@@ -73,6 +77,10 @@
        asp-route-sortOrder="@ViewData["CurrentSort"]"
        asp-route-pageNumber="@(Model.PageIndex + 1)"
        asp-route-currentFilter="@ViewData["CurrentFilter"]"
+       asp-route-furrColor="@ViewData["furrColor"]"
+       asp-route-eyesColor="@ViewData["eyesColor"]"
+       asp-route-description="@ViewData["description"]"
+       asp-route-race="@ViewData["race"]"
        class="btn btn-default @nextDisabled">
         Next
     </a>

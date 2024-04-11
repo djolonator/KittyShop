@@ -162,9 +162,14 @@ namespace KittyShop.Controllers
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 
             string description, string race, int? pageNumber)
         {
-            int pageSize = 5;
+            int pageSize = 3;
             var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
-            
+
+            ViewData["furrColor"] = furrColor;
+            ViewData["eyesColor"] = eyesColor;
+            ViewData["description"] = description;
+            ViewData["race"] = race;
+
             try
             {
                 var products = await _homeService.GetProductsAsync(furrColor,
