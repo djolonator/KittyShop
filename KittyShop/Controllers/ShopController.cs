@@ -27,6 +27,9 @@ namespace KittyShop.Controllers
 
         public async Task<IActionResult> ShoppingCart()
         {
+            var identity = (ClaimsIdentity)User.Identity!;
+            var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
+
             return View();
         }
 

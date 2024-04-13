@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - KittyShop</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/KittyShop.styles.css" asp-append-version="true" />
 </head>
@@ -41,7 +42,9 @@
                             if (role == "Regular")
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Shop" asp-action="ShoppingCart">ShoppingCart</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Shop" asp-action="ShoppingCart">
+                                        <i class="bi-cart"></i> ShoppingCart
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Shop" asp-action="Index">Index</a>

@@ -1,6 +1,4 @@
-﻿using AutoMapper.Configuration.Annotations;
-using KittyShop.Data.Entities;
-using KittyShop.Interfaces.IServices;
+﻿using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
