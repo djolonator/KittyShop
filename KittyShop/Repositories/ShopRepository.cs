@@ -18,25 +18,25 @@ namespace KittyShop.Repositories
             return (await _context.SaveChangesAsync() > 0);
         }
 
-        public async Task<bool> AddShoppingKartAsync(ShoppingKart cartForUser)
+        public async Task<bool> AddShoppingKartAsync(ShoppingCart cartForUser)
         {
-            await _context.ShoppingKarts.AddAsync(cartForUser);
+            await _context.ShoppingCarts.AddAsync(cartForUser);
             return await SaveChangesAsync();
         }
 
-        public async Task<ShoppingKart?> FindShopingCartByUserIdAsync(int userId)
+        public async Task<ShoppingCart?> FindShopingCartByUserIdAsync(int userId)
         {
-            return await _context.ShoppingKarts.FirstOrDefaultAsync(k => k.User.UserId == userId);
+            return await _context.ShoppingCarts.FirstOrDefaultAsync(k => k.UserId == userId);
         }
 
         public async Task<bool> CheckIfShoppingCartExistForUserAsync(int userId)
         {
-            return await _context.ShoppingKarts.AnyAsync(k => k.User.UserId == userId);
+            return await _context.ShoppingCarts.AnyAsync(k => k.UserId == userId);
         }
 
-        public async Task<bool> AddItemToCartAsync(KartItem item)
+        public async Task<bool> AddItemToCartAsync(CartItem item)
         {
-            await _context.KartItems.AddAsync(item);
+            await _context.CartItems.AddAsync(item);
             return await SaveChangesAsync();
         }
     }

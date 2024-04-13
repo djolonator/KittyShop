@@ -26,7 +26,7 @@ namespace KittyShop.Services
 
             var shoppingCart = await _shopRepository.FindShopingCartByUserIdAsync(userId);
             var product = await _adminRepository.FindProductByIdAsync(productId);
-            bool isAdded = await _shopRepository.AddItemToCartAsync(new KartItem() {ShoppingKart = shoppingCart!, Product = product! });
+            bool isAdded = await _shopRepository.AddItemToCartAsync(new CartItem() {ShoppingCartId = shoppingCart.ShoppingCartId!, ProductId = productId! });
             if (isAdded)
                 message = MessagesConstants.ItemAddedToCartSuccess;
             return (isAdded, message);
@@ -35,7 +35,7 @@ namespace KittyShop.Services
         public async Task CreateCartForUserAsync(int userId)
         {
             var user = await _homeRepository.FindUserByIdAsync(userId);
-            var cartForUser = new ShoppingKart() { User =  user! };
+            var cartForUser = new ShoppingCart() { UserId = userId! };
 
             bool isAdded = await _shopRepository.AddShoppingKartAsync(cartForUser);
         }

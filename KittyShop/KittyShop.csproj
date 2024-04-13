@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Migrations\" />
     <Folder Include="logs\" />
+    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\Products Images\" />
   </ItemGroup>
 
