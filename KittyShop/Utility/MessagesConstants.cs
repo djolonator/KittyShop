@@ -21,5 +21,9 @@
 
         public const string ProductDeleteSuccess = "Product successfully deleted!";
         public const string ProductDeleteFail = "Failed to delete the product!";
+
+
+        public const string ItemAddedToCartSuccess = "Item add to cart successfully!";
+        //public const string ProductDeleteFail = "Failed to delete the product!";
     }
 }

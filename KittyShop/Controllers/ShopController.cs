@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using KittyShop.Interfaces.IServices;
+using KittyShop.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -8,8 +10,10 @@ namespace KittyShop.Controllers
     [Authorize(Roles = "Regular")]
     public class ShopController : Controller
     {
-        public ShopController() 
+        private readonly IShopService _shopService;
+        public ShopController(IShopService shopService) 
         {
+            _shopService = shopService;
         }
 
         public async Task<IActionResult> Index()
@@ -19,6 +23,32 @@ namespace KittyShop.Controllers
 
             var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
             return View();
+        }
+
+        public async Task<IActionResult> ShoppingCart()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> AddToCart(int productId)
+        {
+            try
+            {
+                var identity = (ClaimsIdentity)User.Identity!;
+                var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
+
+                var result = await _shopService.AddProductToCartAsync(userId, productId);
+
+                //Prikazi result.message kao poruku
+                
+            }
+            catch(Exception ex) 
+            {
+
+            }
+            return Json(new { success = true });
+
         }
     }
 }

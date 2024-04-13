@@ -9,6 +9,6 @@ namespace KittyShop.Data.Entities
 		public ICollection<KartItem> KartItems { get; set; } = new List<KartItem>();
 
 		[ForeignKey("UserId")]
-		public User? User { get; set; }
+		public User User { get; set; }
 	}
 }
