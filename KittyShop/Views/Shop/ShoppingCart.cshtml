@@ -1,1 +1,15 @@
-﻿
+﻿@model IEnumerable<CartItemModel>
+
+
+<div class="container">
+    <div class="row justify-content-center gy-5">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+                @await Html.PartialAsync("_CartItemPartial", item)
+            </div>
+        }
+
+    </div>
+</div>

@@ -9,6 +9,5 @@
         public string EyesColor { get; set; } = null!;
 		public float Price { get; set; }
         public string ImgUrlPath { get; set; } = null!;
-
 	}
 }

@@ -24,9 +24,18 @@ namespace KittyShop.Repositories
             return await SaveChangesAsync();
         }
 
+        public async Task<int> GetShopingCartIdByUserIdAsync(int userId)
+        {
+            var cart =  await _context.ShoppingCarts.FirstOrDefaultAsync(k => k.UserId == userId);
+            return cart!.ShoppingCartId;
+        }
+
         public async Task<ShoppingCart?> FindShopingCartByUserIdAsync(int userId)
         {
-            return await _context.ShoppingCarts.FirstOrDefaultAsync(k => k.UserId == userId);
+            return await _context.ShoppingCarts.Include(c => c.CartItems)
+                                               .ThenInclude(c => c.Product)
+                                               .FirstOrDefaultAsync(k => k.UserId == userId);
+
         }
 
         public async Task<bool> CheckIfShoppingCartExistForUserAsync(int userId)

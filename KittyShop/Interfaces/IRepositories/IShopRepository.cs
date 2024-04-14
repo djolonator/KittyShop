@@ -6,8 +6,9 @@ namespace KittyShop.Interfaces.IRepositories
     {
         Task<bool> SaveChangesAsync();
         Task<bool> AddShoppingKartAsync(ShoppingCart cartForUser);
-        Task<ShoppingCart?> FindShopingCartByUserIdAsync(int userId);
+        Task<int> GetShopingCartIdByUserIdAsync(int userId);
         Task<bool> CheckIfShoppingCartExistForUserAsync(int userId);
         Task<bool> AddItemToCartAsync(CartItem item);
+        Task<ShoppingCart?> FindShopingCartByUserIdAsync(int userId);
     }
 }

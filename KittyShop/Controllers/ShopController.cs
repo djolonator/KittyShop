@@ -1,5 +1,4 @@
 ﻿using KittyShop.Interfaces.IServices;
-using KittyShop.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -29,8 +28,9 @@ namespace KittyShop.Controllers
         {
             var identity = (ClaimsIdentity)User.Identity!;
             var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
+            var cart = await _shopService.GetShoppingCartForUser(userId);
 
-            return View();
+            return View(cart);
         }
 
         [HttpPost]

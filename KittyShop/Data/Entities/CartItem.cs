@@ -11,5 +11,7 @@ namespace KittyShop.Data.Entities
 
 		[ForeignKey("ProductId")]
 		public int ProductId { get; set; }
+
+		public Product Product { get; set; }	
 	}
 }
