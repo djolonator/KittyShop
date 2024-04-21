@@ -10,49 +10,56 @@ namespace KittyShop.Controllers
     [Authorize(Roles = "Regular")]
     public class ShopController : Controller
     {
+        private readonly ILogger<ShopController> _logger;
         private readonly IShopService _shopService;
-        public ShopController(IShopService shopService) 
+        public ShopController(IShopService shopService, ILogger<ShopController> logger)
         {
             _shopService = shopService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
-            //var nameclaim = User.Claims.FirstOrDefault(c => c.Type == "Name");
-            //var shopclaim = User.Claims.FirstOrDefault(c => c.Type == "Shop");
-
             var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
             return View();
         }
 
         public async Task<IActionResult> ShoppingCart()
         {
-            var identity = (ClaimsIdentity)User.Identity!;
-            var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
-            var cart = await _shopService.GetShoppingCartForUser(userId);
+            try
+            {
+                var identity = (ClaimsIdentity)User.Identity!;
+                var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
+                var cart = await _shopService.GetShoppingCartForUser(userId);
+                return View(cart);
+            }
 
-            return View(cart);
+            catch (Exception ex)
+            {
+                _logger.LogCritical($"Shopping cart page failed to load. Code exited with message {ex.Message} at {ex.StackTrace}", ex);
+            }
+
+            SetMessageForUser(new MessageModel() { Message = "Something went wrong, redirecting to index page"});
+            return RedirectToAction("Index", "Shop");
+            
         }
 
         [HttpPost]
         public async Task<JsonResult> AddToCart(int productId)
         {
+            var result = new MessageModel();
             try
             {
                 var identity = (ClaimsIdentity)User.Identity!;
                 var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
-
-                var result = await _shopService.AddProductToUserCartAsync(userId, productId);
-
-                //Prikazi result.message kao poruku
-                
+                result = await _shopService.AddProductToUserCartAsync(userId, productId);
             }
             catch(Exception ex) 
             {
-
+                _logger.LogCritical($"Failed to add item to cart. Code exited with message {ex.Message} at {ex.StackTrace}", ex);
             }
-            return Json(new { success = true });
 
+            return Json(new { success = result.IsSuccess, message = result.Message });
         }
 
         [HttpPost]
@@ -62,15 +69,24 @@ namespace KittyShop.Controllers
             try
             {
                 result = await _shopService.UpdateCartForUser(int.Parse(cartId), int.Parse(productId), int.Parse(quantity));
-                //Prikazi result.message kao poruku
-
             }
             catch (Exception ex)
             {
-
+                _logger.LogCritical($"Failed to update item in cart. Code exited with message {ex.Message} at {ex.StackTrace}", ex);
+                result.Message = "Something went wrong, update item failed.";
             }
 
+            SetMessageForUser(result);
+
             return RedirectToAction("ShoppingCart");
+        }
+
+        private void SetMessageForUser(MessageModel result)
+        {
+            if (result.IsSuccess)
+                TempData["successMessage"] = result.Message;
+            else
+                TempData["errorMessage"] = result.Message;
         }
     }
 }

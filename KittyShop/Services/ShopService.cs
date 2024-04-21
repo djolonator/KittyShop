@@ -83,7 +83,7 @@ namespace KittyShop.Services
         {
             var cartEntity = await _shopRepository.FindShopingCartByUserIdAsync(userId);
             float totalPrice = 0;
-
+            
             var cartForView = _mapper.Map<ShoppingCartModel>(cartEntity);
 
             cartForView.CartItems.ForEach(cartItem => { totalPrice +=cartItem.Quantity * cartItem.Cat.Price; });
@@ -94,7 +94,7 @@ namespace KittyShop.Services
         public async Task<MessageModel> UpdateCartForUser(int cartId, int productId, int quantity)
         {
             var result = new MessageModel();
-
+            
             var cart = await _shopRepository.GetShoppingCartByIdAsync(cartId);
             var cartItem = cart!.CartItems.FirstOrDefault(c => c.ProductId == productId)!;
 

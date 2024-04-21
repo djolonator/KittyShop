@@ -13,16 +13,11 @@ namespace KittyShop.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ICustomerService _userService;
-        private readonly IAdminService _adminService;
         private readonly IHomeService _homeService;
 
-        public HomeController(ILogger<HomeController> logger, ICustomerService kittyShopService, 
-            IAdminService adminService, IHomeService homeService)
+        public HomeController(ILogger<HomeController> logger, IHomeService homeService)
         {
             _logger = logger;
-            _userService = kittyShopService;
-            _adminService = adminService;
             _homeService = homeService;
         }
 
