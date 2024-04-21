@@ -16,21 +16,18 @@
                     <div class="quantityAndPriceDiv">
                         @using (Html.BeginForm("UpdateCart", "Shop", FormMethod.Post))
                         {
-                        @Html.DropDownListFor(m => m.Quantity, new List<SelectListItem> {
-                        new SelectListItem { Value = "0", Text = "Delete Item" },
-                        new SelectListItem { Value = "1", Text = "Quantity 1" },
-                        new SelectListItem { Value = "2", Text = "Quantity 2" },
-                        new SelectListItem { Value = "3", Text = "Quantity 3" },
-                        new SelectListItem { Value = "4", Text = "Quantity 4" },
-                        new SelectListItem { Value = "5", Text = "Quantity 5" },
-                        new SelectListItem { Value = "6", Text = "Quantity 6" },
-                        new SelectListItem { Value = "7", Text = "Quantity 7" },
-                        new SelectListItem { Value = "8", Text = "Quantity 8" },
-                        new SelectListItem { Value = "9", Text = "Quantity 9" },
+                            @Html.DropDownListFor(m => m.Quantity, new List<SelectListItem> {
+                                new SelectListItem { Value = "0", Text = "Delete Item" },
+                                new SelectListItem { Value = "1", Text = "Quantity 1" },
+                                new SelectListItem { Value = "2", Text = "Quantity 2" },
+                                new SelectListItem { Value = "3", Text = "Quantity 3" },
+                                new SelectListItem { Value = "4", Text = "Quantity 4" },
+                                new SelectListItem { Value = "5", Text = "Quantity 5" },
+                                new SelectListItem { Value = "6", Text = "Quantity 6" },
+                                new SelectListItem { Value = "7", Text = "Quantity 7" },
+                                new SelectListItem { Value = "8", Text = "Quantity 8" },
+                                new SelectListItem { Value = "9", Text = "Quantity 9" },
                         }, new { @class = "quantitySelect" })
-                      @*   <button type="button" class="btn btn-outline-primary btn-sm" disabled onclick="updateQuantity(@Model.Cat.ProductId, this)">Update</button> *@
-
-                        
                             @Html.Hidden("quantity", Model.Quantity)
                             @Html.Hidden("productId", Model.Cat.ProductId)
                             @Html.Hidden("cartId", shoppingCartId)

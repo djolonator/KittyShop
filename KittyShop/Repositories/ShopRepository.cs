@@ -45,7 +45,7 @@ namespace KittyShop.Repositories
                                                .FirstOrDefaultAsync(c=> c.ShoppingCartId == cartId);
         }
 
-        public async Task<bool> CheckIfShoppingCartExistForUserAsync(int userId)
+        public async Task<bool> CheckIfShoppingCartExistsForUserAsync(int userId)
         {
             return await _context.ShoppingCarts.AnyAsync(k => k.UserId == userId);
         }

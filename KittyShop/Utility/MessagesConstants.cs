@@ -24,6 +24,9 @@
 
 
         public const string ItemAddedToCartSuccess = "Item add to cart successfully!";
-        //public const string ProductDeleteFail = "Failed to delete the product!";
+        public const string FailedToAddItemToCart = "Failed to add item in cart!";
+        public const string CartUpdateSuccess = "Cart updated successfully";
+        public const string FailedToUpdateCart = "Failed to update item in cart!";
+        public const string CartItemMaximumQuantity = "Maximum number of quantity allready in shopping cart!";
     }
 }

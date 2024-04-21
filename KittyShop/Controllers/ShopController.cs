@@ -42,7 +42,7 @@ namespace KittyShop.Controllers
                 var identity = (ClaimsIdentity)User.Identity!;
                 var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
 
-                var result = await _shopService.AddProductToCartAsync(userId, productId);
+                var result = await _shopService.AddProductToUserCartAsync(userId, productId);
 
                 //Prikazi result.message kao poruku
                 
@@ -54,24 +54,6 @@ namespace KittyShop.Controllers
             return Json(new { success = true });
 
         }
-
-        //[HttpPost]
-        //public async Task<JsonResult> UpdateCart(int cartId, int productId, int quantity)
-        //{
-        //    var result = new MessageModel();
-        //    try
-        //    {
-        //        result = await _shopService.UpdateCartForUser(cartId, productId, quantity);
-        //        //Prikazi result.message kao poruku
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-
-        //    }
-        //    return Json(new { success = result.IsSuccess });
-
-        //}
 
         [HttpPost]
         public async Task<IActionResult> UpdateCart(string quantity, string productId, string cartId)

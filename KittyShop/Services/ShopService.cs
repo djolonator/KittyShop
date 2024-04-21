@@ -18,52 +18,58 @@ namespace KittyShop.Services
             _mapper = mapper;
         }
 
-        public async Task<MessageModel> AddProductToCartAsync(int userId, int productId)
+        public async Task<MessageModel> AddProductToUserCartAsync(int userId, int productId)
         {
             var result = new MessageModel();
-            if (!await _shopRepository.CheckIfShoppingCartExistForUserAsync(userId))
-                await CreateCartForUserAsync(userId);
+            if (!await _shopRepository.CheckIfShoppingCartExistsForUserAsync(userId))
+                await CreateCartForUserAsync(userId); // videti ovde da li pitati jel kreirano
 
             var cart = await _shopRepository.FindShopingCartByUserIdAsync(userId);
 
-            if (cart.CartItems.Any(i => i.ProductId == productId))
-            {
-                var item = cart.CartItems.FirstOrDefault(i => i.ProductId == productId);
-
-                // maks je 10, zbog selecta
-                item.Quantity ++;
-            }
+            if (IsProductAlradyInCart(cart!, productId))
+                result = await ChangeQuantityOfItemInCartAsync(cart!, productId);
             else
-            {
-                cart.CartItems.Add(new CartItem() { ShoppingCartId = cart.ShoppingCartId!, ProductId = productId! });
-            }
-
-            bool isSaved = await _shopRepository.SaveChangesAsync();
-            if (isSaved)
-                result.Message = MessagesConstants.ItemAddedToCartSuccess;
+                result = await AddProductToCartAsync(cart!, productId);
 
             return result;
         }
 
-        private async Task<MessageModel> IncreaseQuantityOfItemInCart(int shoppingCartId, int productId)
+        private bool IsProductAlradyInCart(ShoppingCart cart, int productId)
         {
-            string message = "";
-            bool isAdded = await _shopRepository.IncreaseQuantityByOne(shoppingCartId, productId);
-            if (isAdded)
-                message = MessagesConstants.ItemAddedToCartSuccess;
-
-            return (new MessageModel() { IsSuccess = isAdded, Message = message });
+            return cart.CartItems.Any(i => i.ProductId == productId) ? true : false;
         }
 
-        private async Task<MessageModel> AddProductToCart(int shoppingCartId, int productId)
+        private async Task<MessageModel> ChangeQuantityOfItemInCartAsync(ShoppingCart cart, int productId)
         {
-            
-            string message = "";
-            bool isAdded = await _shopRepository.AddItemToCartAsync(new CartItem() { ShoppingCartId = shoppingCartId!, ProductId = productId! });
-            if (isAdded)
-                message = MessagesConstants.ItemAddedToCartSuccess;
+            var result = new MessageModel();
+            var item = cart!.CartItems.FirstOrDefault(i => i.ProductId == productId)!;
 
-            return (new MessageModel() { IsSuccess = isAdded, Message = message});
+            if (item.Quantity < 10)
+            {
+                item.Quantity++;
+                result.IsSuccess = await _shopRepository.SaveChangesAsync();
+                if (result.IsSuccess)
+                    result.Message = MessagesConstants.ItemAddedToCartSuccess;
+                else
+                    result.Message = MessagesConstants.FailedToAddItemToCart;
+            }
+            else
+                result.Message = MessagesConstants.CartItemMaximumQuantity;
+
+            return result;
+        }
+
+        private async Task<MessageModel> AddProductToCartAsync(ShoppingCart cart, int productId)
+        {
+            var result = new MessageModel();
+            cart!.CartItems.Add(new CartItem() { ShoppingCartId = cart.ShoppingCartId!, ProductId = productId! });
+            result.IsSuccess = await _shopRepository.SaveChangesAsync();
+            if (result.IsSuccess)
+                result.Message = MessagesConstants.ItemAddedToCartSuccess;
+            else
+                result.Message = MessagesConstants.FailedToAddItemToCart;
+
+            return result;
         }
 
         public async Task CreateCartForUserAsync(int userId)
@@ -87,24 +93,23 @@ namespace KittyShop.Services
 
         public async Task<MessageModel> UpdateCartForUser(int cartId, int productId, int quantity)
         {
-            bool isUpdated = false;
-            string message = "";
+            var result = new MessageModel();
 
             var cart = await _shopRepository.GetShoppingCartByIdAsync(cartId);
-            var cartItem = cart.CartItems.FirstOrDefault(c => c.ProductId == productId);
+            var cartItem = cart!.CartItems.FirstOrDefault(c => c.ProductId == productId)!;
 
             if (quantity > 0)
-            {
                 cartItem.Quantity = quantity;
-            }
             else
-            {
                 cart.CartItems.Remove(cartItem);
-            }
 
-            isUpdated = await _shopRepository.SaveChangesAsync(); 
+            result.IsSuccess = await _shopRepository.SaveChangesAsync();
+            if (result.IsSuccess)
+                result.Message = MessagesConstants.CartUpdateSuccess;
+            else
+                result.Message = MessagesConstants.FailedToUpdateCart;
 
-            return (new MessageModel() { IsSuccess = isUpdated, Message = message });
+            return result;
         }
     }
 }
