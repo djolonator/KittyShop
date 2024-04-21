@@ -62,7 +62,7 @@ namespace KittyShop.Services
         private async Task<MessageModel> AddProductToCartAsync(ShoppingCart cart, int productId)
         {
             var result = new MessageModel();
-            cart!.CartItems.Add(new CartItem() { ShoppingCartId = cart.ShoppingCartId!, ProductId = productId! });
+            cart!.CartItems.Add(new CartItem() { ShoppingCartId = cart.ShoppingCartId!, ProductId = productId!, Quantity =1 });
             result.IsSuccess = await _shopRepository.SaveChangesAsync();
             if (result.IsSuccess)
                 result.Message = MessagesConstants.ItemAddedToCartSuccess;
