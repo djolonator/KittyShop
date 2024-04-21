@@ -1,4 +1,5 @@
 ﻿using KittyShop.Interfaces.IServices;
+using KittyShop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -52,6 +53,42 @@ namespace KittyShop.Controllers
             }
             return Json(new { success = true });
 
+        }
+
+        //[HttpPost]
+        //public async Task<JsonResult> UpdateCart(int cartId, int productId, int quantity)
+        //{
+        //    var result = new MessageModel();
+        //    try
+        //    {
+        //        result = await _shopService.UpdateCartForUser(cartId, productId, quantity);
+        //        //Prikazi result.message kao poruku
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+
+        //    }
+        //    return Json(new { success = result.IsSuccess });
+
+        //}
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCart(string quantity, string productId, string cartId)
+        {
+            var result = new MessageModel();
+            try
+            {
+                result = await _shopService.UpdateCartForUser(int.Parse(cartId), int.Parse(productId), int.Parse(quantity));
+                //Prikazi result.message kao poruku
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return RedirectToAction("ShoppingCart");
         }
     }
 }

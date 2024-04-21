@@ -3,7 +3,6 @@ using KittyShop.Data.Entities;
 using KittyShop.Interfaces.IRepositories;
 using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
-using KittyShop.Repositories;
 using KittyShop.Utility;
 
 namespace KittyShop.Services
@@ -19,18 +18,52 @@ namespace KittyShop.Services
             _mapper = mapper;
         }
 
-        public async Task<(bool isAdded, string message)> AddProductToCartAsync(int userId, int productId)
+        public async Task<MessageModel> AddProductToCartAsync(int userId, int productId)
         {
-            string message = "";
+            var result = new MessageModel();
             if (!await _shopRepository.CheckIfShoppingCartExistForUserAsync(userId))
                 await CreateCartForUserAsync(userId);
 
-            var shoppingCartId = await _shopRepository.GetShopingCartIdByUserIdAsync(userId);
+            var cart = await _shopRepository.FindShopingCartByUserIdAsync(userId);
 
+            if (cart.CartItems.Any(i => i.ProductId == productId))
+            {
+                var item = cart.CartItems.FirstOrDefault(i => i.ProductId == productId);
+
+                // maks je 10, zbog selecta
+                item.Quantity ++;
+            }
+            else
+            {
+                cart.CartItems.Add(new CartItem() { ShoppingCartId = cart.ShoppingCartId!, ProductId = productId! });
+            }
+
+            bool isSaved = await _shopRepository.SaveChangesAsync();
+            if (isSaved)
+                result.Message = MessagesConstants.ItemAddedToCartSuccess;
+
+            return result;
+        }
+
+        private async Task<MessageModel> IncreaseQuantityOfItemInCart(int shoppingCartId, int productId)
+        {
+            string message = "";
+            bool isAdded = await _shopRepository.IncreaseQuantityByOne(shoppingCartId, productId);
+            if (isAdded)
+                message = MessagesConstants.ItemAddedToCartSuccess;
+
+            return (new MessageModel() { IsSuccess = isAdded, Message = message });
+        }
+
+        private async Task<MessageModel> AddProductToCart(int shoppingCartId, int productId)
+        {
+            
+            string message = "";
             bool isAdded = await _shopRepository.AddItemToCartAsync(new CartItem() { ShoppingCartId = shoppingCartId!, ProductId = productId! });
             if (isAdded)
                 message = MessagesConstants.ItemAddedToCartSuccess;
-            return (isAdded, message);
+
+            return (new MessageModel() { IsSuccess = isAdded, Message = message});
         }
 
         public async Task CreateCartForUserAsync(int userId)
@@ -40,28 +73,38 @@ namespace KittyShop.Services
             bool isAdded = await _shopRepository.AddShoppingKartAsync(cartForUser);
         }
 
-        public async Task<List<CartItemModel>> GetShoppingCartForUser(int userId)
+        public async Task<ShoppingCartModel> GetShoppingCartForUser(int userId)
         {
-            var catList = new List<CatModel>();
-            var cart = await _shopRepository.FindShopingCartByUserIdAsync(userId);
+            var cartEntity = await _shopRepository.FindShopingCartByUserIdAsync(userId);
+            float totalPrice = 0;
 
-            foreach (var item in cart.CartItems)
+            var cartForView = _mapper.Map<ShoppingCartModel>(cartEntity);
+
+            cartForView.CartItems.ForEach(cartItem => { totalPrice +=cartItem.Quantity * cartItem.Cat.Price; });
+            cartForView.TotalPrice = totalPrice;
+            return cartForView;
+        }
+
+        public async Task<MessageModel> UpdateCartForUser(int cartId, int productId, int quantity)
+        {
+            bool isUpdated = false;
+            string message = "";
+
+            var cart = await _shopRepository.GetShoppingCartByIdAsync(cartId);
+            var cartItem = cart.CartItems.FirstOrDefault(c => c.ProductId == productId);
+
+            if (quantity > 0)
             {
-                var catModel = _mapper.Map<CatModel>(item.Product);
-                catList.Add(catModel);
+                cartItem.Quantity = quantity;
             }
-            
-            
-            var itemList = catList
-                .GroupBy(p => p.ProductId)
-                .Select(g => new CartItemModel()
-                {
-                    Cat = g.First(), 
-                    Quantity = g.Count() 
-                }).ToList();
+            else
+            {
+                cart.CartItems.Remove(cartItem);
+            }
 
+            isUpdated = await _shopRepository.SaveChangesAsync(); 
 
-            return itemList;
+            return (new MessageModel() { IsSuccess = isUpdated, Message = message });
         }
     }
 }

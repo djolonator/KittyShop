@@ -13,6 +13,10 @@ namespace KittyShop.Data
             CreateMap<LoginModel, User>().ReverseMap();
             CreateMap<EditProfileModel, User>().ReverseMap();
             CreateMap<Product, CatModel>().ReverseMap();
+            CreateMap<CartItem, CartItemModel>()
+                .ForMember(dest => dest.Cat, opt => opt.MapFrom(src => src.Product))
+                .ReverseMap();
+            CreateMap<ShoppingCart, ShoppingCartModel>().ReverseMap();
         }
     }
 }
