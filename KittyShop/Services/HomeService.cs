@@ -96,27 +96,26 @@ namespace KittyShop.Services
             return products;
         }
 
-        public async Task<(bool isRegisterSuccess, string message)> RegisterUser(RegisterModel model)
+        public async Task<MessageModel> RegisterUser(RegisterModel model)
         {
-            bool isAuthenticated = await AuthenticateRegister(model);
-            bool isCreated = await CreateUser(model);
-            bool isRegisterSuccess = false;
-            string message = string.Empty;
-
-            if (isAuthenticated && isCreated)
+            var result = new MessageModel();
+            if (await UsernameExists(model))
+                result.Message = MessagesConstants.UserNameTaken;
+            else
             {
-                isRegisterSuccess = true;
-                message = MessagesConstants.RegisterSuccess;
+                result.IsSuccess = await CreateUser(model);
+                if (result.IsSuccess)
+                    result.Message = MessagesConstants.RegisterSuccess;
+                else
+                    result.Message = MessagesConstants.RegisterFail;
             }
-            else if (!isAuthenticated)
-                message = MessagesConstants.UserNameTaken;
 
-            return (isRegisterSuccess, message);    
+            return result;
         }
 
-        private async Task<bool> AuthenticateRegister(RegisterModel model)
+        private async Task<bool> UsernameExists(RegisterModel model)
         {
-            return !await _homeRepository.UserNameExistsAsync(model.UserName);
+            return await _homeRepository.UserNameExistsAsync(model.UserName);
         }
 
         private async Task<bool> CreateUser(RegisterModel model)
@@ -133,18 +132,20 @@ namespace KittyShop.Services
             return _cipherService.Encrypt(password);
         }
 
-        public async Task<(User? user, string message)> Login(LoginModel model)
+        public async Task<(LoginModel? userModel, string message)> Login(LoginModel model)
         {
-            var message = MessagesConstants.WrongLoginCredentials;
-            var isAuthenticated = await AuthenticateLogin(model.UserName, model.Password);
+            var message = "";
+            var isAuthenticated = await AuthenticateUser(model.UserName, model.Password);
 
-            if (isAuthenticated.verdict)
-                message = MessagesConstants.LoggedInSuccess;
+            if (!isAuthenticated.verdict)
+                message = MessagesConstants.WrongLoginCredentials;
+            
+            var userModel = _mapper.Map<LoginModel>(isAuthenticated.user);
 
-            return (isAuthenticated.user, message);
+            return (userModel, message);
         }
 
-        private async Task<(bool verdict, User? user)> AuthenticateLogin(string userName, string password)
+        private async Task<(bool verdict, User? user)> AuthenticateUser(string userName, string password)
         {
             bool verdict = false;
             var user = await _homeRepository.FindUserByNameAsync(userName);
@@ -157,54 +158,46 @@ namespace KittyShop.Services
             return (verdict, user);
         }
 
-        public async Task<(EditProfileModel user, string message)> GetUserAsync(int userId)
+        public async Task<EditProfileModel> GetUserAsync(int userId)
         {
-            string message = string.Empty;
-            var model = new EditProfileModel();
-            var user = await _homeRepository.FindUserByIdAsync(userId);
-            if (user == null)
-                message = MessagesConstants.SomethingWentWrong;
-            else
-            {
-                model = _mapper.Map<EditProfileModel>(user);
-            }
-            
-            return (model, message);
+            var userEntity = await _homeRepository.FindUserByIdAsync(userId);
+            var userModel = _mapper.Map<EditProfileModel>(userEntity);
+
+            return userModel;
         }
 
-        public async Task<(bool isEdited, string message)> EditProfile(EditProfileModel userToEdit, int userId)
+        public async Task<MessageModel> EditProfile(EditProfileModel userToEdit, int userId)
         {
-            string message = MessagesConstants.SomethingWentWrong;
-            bool isEdited = false;
+            var result = new MessageModel();
             var entityToUpdate = await _homeRepository.FindUserByIdAsync(userId);
-            if (entityToUpdate != null)
+
+            if (userToEdit.NewPassword != null)
+                userToEdit!.Password = _cipherService.Encrypt(userToEdit.NewPassword);
+
+            if (userToEdit.NewEmail != null)
+                userToEdit!.Email = userToEdit.NewEmail;
+
+            if (userToEdit.NewUserName != null)
             {
-                if (userToEdit.NewUserName != null)
+                var userNameExists = await _homeRepository.UserNameExistsAsync(userToEdit.NewUserName);
+
+                if (userNameExists)
                 {
-                    var userNameExists = await _homeRepository.UserNameExistsAsync(userToEdit.NewUserName);
-
-                    if (userNameExists)
-                    {
-                        message = MessagesConstants.UserNameTaken;
-                    }
-                    else
-                    {
-                        userToEdit!.UserName = userToEdit.NewUserName!;
-                    }
+                    result.Message = MessagesConstants.UserNameTaken;
                 }
+                else
+                {
+                    userToEdit!.UserName = userToEdit.NewUserName!;
+                    _mapper.Map(userToEdit, entityToUpdate);
 
-                if (userToEdit.NewPassword != null)
-                    userToEdit!.Password = _cipherService.Encrypt(userToEdit.NewPassword);
+                    result.IsSuccess = await _homeRepository.SaveChangesAsync();
 
-                if (userToEdit.NewEmail != null)
-                    userToEdit!.Email = userToEdit.NewEmail;
+                    if (result.IsSuccess)
+                        result.Message = MessagesConstants.UserEditedSuccessfully;
+                }
             }
 
-            _mapper.Map(userToEdit, entityToUpdate);
-
-            isEdited = await _homeRepository.SaveChangesAsync();
-
-            return (isEdited, message);
+            return result;
         }
     }
 }

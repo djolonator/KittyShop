@@ -22,14 +22,10 @@
     //var role = identity.FindFirst(ClaimTypes.Role)!.Value;
     var role = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault()!.Value;
 }
-@if (TempData["successMessage"] != null)
-{
-    <span class="successToaster d-none">@TempData["successMessage"]</span>
-}
-else
-{
-    <span class="errorToaster d-none">@TempData["errorMessage"]</span>
-}
+
+ <span class="successToaster d-none">@TempData["successMessage"]</span>
+ <span class="errorToaster d-none">@TempData["errorMessage"]</span>
+
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">

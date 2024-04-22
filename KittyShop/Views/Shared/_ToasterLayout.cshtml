@@ -1,17 +1,15 @@
-﻿<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+﻿
+<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 <script type="text/javascript" src="~/js/site.js"></script>
 
 <html>
-@if (TempData["successMessage"] != null)
-{
-    <span class="successToaster d-none">@TempData["successMessage"]</span>
-}
-else
-{
-    <span class="errorToaster d-none">@TempData["errorMessage"]</span>
-}
+
+ <span class="successToaster d-none">@TempData["successMessage"]</span>
+ <span class="errorToaster d-none">@TempData["errorMessage"]</span>
+
 @RenderBody()
 </html>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using KittyShop.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace KittyShop.Models
 {
@@ -9,5 +10,9 @@ namespace KittyShop.Models
 
         [Required]
         public string Password { get; set; } = string.Empty;
-	}
+        public UserTypes Type { get; set; }
+        public int UserId { get; set; }
+
+
+    }
 }

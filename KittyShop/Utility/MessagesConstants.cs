@@ -7,6 +7,7 @@
         public const string WrongLoginCredentials = "You entered wrong login credentials!";
         public const string LoggedInSuccess = "Logged in";
         public const string UserNameTaken = "User name allready exists!";
+        public const string UserEditedSuccessfully = "User edited successfully.";
 
         public const string RegisterFail = "User could not be created!";
         public const string RegisterSuccess = "Registered!";

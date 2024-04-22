@@ -8,9 +8,9 @@ namespace KittyShop.Interfaces.IServices
     {
         Task<PaginatedList<CatModel>> GetProductsAsync(string furrColor, string eyesColor,
             string description, string race, int? pageNumber, int pageSize);
-        public Task<(bool isRegisterSuccess, string message)> RegisterUser(RegisterModel model);
-        Task<(User? user, string message)> Login(LoginModel model);
-        Task<(EditProfileModel user, string message)> GetUserAsync(int userId);
-        Task<(bool isEdited, string message)> EditProfile(EditProfileModel userToEdit, int userId);
+        public Task<MessageModel> RegisterUser(RegisterModel model);
+        Task<(LoginModel? userModel, string message)> Login(LoginModel model);
+        Task<EditProfileModel> GetUserAsync(int userId);
+        Task<MessageModel> EditProfile(EditProfileModel userToEdit, int userId);
     }
 }

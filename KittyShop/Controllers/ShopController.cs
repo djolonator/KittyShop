@@ -3,10 +3,10 @@ using KittyShop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Threading.Tasks.Dataflow;
 
 namespace KittyShop.Controllers
 {
-    //[Authorize(Policy = "User")]
     [Authorize(Roles = "Regular")]
     public class ShopController : Controller
     {
@@ -18,7 +18,7 @@ namespace KittyShop.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        public ActionResult Index()
         {
             var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
             return View();
@@ -31,17 +31,19 @@ namespace KittyShop.Controllers
                 var identity = (ClaimsIdentity)User.Identity!;
                 var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
                 var cart = await _shopService.GetShoppingCartForUser(userId);
-                return View(cart);
+                if (cart != null)
+                    return View(cart);
+                else
+                    SetMessageForUser(new MessageModel() { Message = "Your cart is empty, add items to it.", IsSuccess = true });
             }
 
             catch (Exception ex)
             {
                 _logger.LogCritical($"Shopping cart page failed to load. Code exited with message {ex.Message} at {ex.StackTrace}", ex);
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong, redirecting to index page." });
             }
-
-            SetMessageForUser(new MessageModel() { Message = "Something went wrong, redirecting to index page"});
-            return RedirectToAction("Index", "Shop");
             
+            return RedirectToAction("Index", "Shop");
         }
 
         [HttpPost]

@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace KittyShop.Controllers
 {
-    //[Authorize]
+    
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -30,49 +30,33 @@ namespace KittyShop.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel user)
         {
+            string messsage = "";
             try
             {
                 if (ModelState.IsValid)
-                {
+                {   
                     var result = await _homeService.Login(user);
-                    //result.message ide u alert
-                    ViewData["Message"] = result.message;
 
-                    if (result.user != null)
+                    if (result.userModel != null)
                     {
-                        await SignInUser(MakeClaims(result.user));
+                        await SignInUser(MakeClaims(result.userModel));
                         
-                        if (result.user.Type.ToString() == "Admin")
+                        if (result.userModel.Type.ToString() == "Admin")
                             return RedirectToAction("Index", "Admin");
                         else
                             return RedirectToAction("Index", "Shop");
                     }
+                    messsage = result.message;
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"Failed to login. Code exited with message {ex.Message} at {ex.StackTrace}");
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong!" });
             }
+
+            SetMessageForUser(new MessageModel() { Message = messsage });
             return View(user);
-        }
-
-        private ClaimsIdentity MakeClaims(User user)
-        {
-            var claims = new List<Claim>{
-                        new Claim(ClaimTypes.Role, user.Type.ToString()),
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim(ClaimTypes.SerialNumber, user.UserId.ToString())};
-
-            var claimsIdentity = new ClaimsIdentity(
-            claims, "Login");
-
-            return claimsIdentity;
-        }
-
-        private async Task SignInUser(ClaimsIdentity claimsIdentity)
-        {
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));
         }
 
         [HttpGet]
@@ -97,17 +81,14 @@ namespace KittyShop.Controllers
                 if (ModelState.IsValid)
                 {
                     var result = await _homeService.RegisterUser(user);
-                    if (result.isRegisterSuccess)
-                        return RedirectToAction("Login");
-                    //result.message ide u notyf
+                    SetMessageForUser(result);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"Failed to register. Code exited with message {ex.Message} at {ex.StackTrace}");
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong!" });
             }
-
-            //return RedirectToAction("Login");
 
             return View(user);
         }
@@ -118,16 +99,16 @@ namespace KittyShop.Controllers
             {
                 var identity = (ClaimsIdentity)User.Identity!;
                 var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
-                var result = await _homeService.GetUserAsync(userId);
-                if (!string.IsNullOrEmpty(result.user.UserName))
-                    return View(result.user);
+                var user = await _homeService.GetUserAsync(userId);
+                return View(user);
             }
             catch(Exception ex) 
             {
                 _logger.LogCritical($"Failed to load edit profile page. Code exited with message {ex.Message} at {ex.StackTrace}");
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong, redirecting to index page" });
             }
-            //result.message ide u notyf
-            return RedirectToAction("Login");
+            
+            return RedirectToAction("Index", "Shop");
         }
 
         [HttpPost]
@@ -140,17 +121,17 @@ namespace KittyShop.Controllers
                     var identity = (ClaimsIdentity)User.Identity!;
                     var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
                     var result = await _homeService.EditProfile(user, userId);
-
-                    if (!result.isEdited)
-                        return View(user);
+                    SetMessageForUser(result);
+                    return View(user);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"Failed to edit profile. Code exited with message {ex.Message} at {ex.StackTrace}");
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong, redirecting to index page" });
             }
 
-            return RedirectToAction("Logout");
+            return RedirectToAction("Index", "Shop");
         }
 
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 
@@ -159,27 +140,59 @@ namespace KittyShop.Controllers
             int pageSize = 3;
             var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
 
-            ViewData["furrColor"] = furrColor;
-            ViewData["eyesColor"] = eyesColor;
-            ViewData["description"] = description;
-            ViewData["race"] = race;
+            PreserveSearchParametersThroughPagination(furrColor, eyesColor, description, race);
 
             try
             {
                 var products = await _homeService.GetProductsAsync(furrColor,
                     eyesColor, description, race, pageNumber, pageSize);
 
-                if (products != null)
-                {
-                    return View(products);
-                }
+                return View(products);
+                
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"Failed to load shop list page.Code exited with message {ex.Message} at {ex.StackTrace}", ex);
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong, redirecting to index page" });
             }
-            //var rt = MessagesConstants.SomethingWentWrong; u notyf
+           
             return roleClaim!.Value == "Admin" ? RedirectToAction("Index", "Admin") : RedirectToAction("Index", "Shop");
+        }
+
+        private ClaimsIdentity MakeClaims(LoginModel userModel)
+        {
+            var claims = new List<Claim>{
+                        new Claim(ClaimTypes.Role, userModel.Type.ToString()),
+                        new Claim(ClaimTypes.Name, userModel.UserName),
+                        new Claim(ClaimTypes.SerialNumber, userModel.UserId.ToString())};
+
+            var claimsIdentity = new ClaimsIdentity(
+            claims, "Login");
+
+            return claimsIdentity;
+        }
+
+        private async Task SignInUser(ClaimsIdentity claimsIdentity)
+        {
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+        }
+
+        private void PreserveSearchParametersThroughPagination(string furrColor, string eyesColor,
+            string description, string race)
+        {
+            ViewData["furrColor"] = furrColor;
+            ViewData["eyesColor"] = eyesColor;
+            ViewData["description"] = description;
+            ViewData["race"] = race;
+        }
+
+        private void SetMessageForUser(MessageModel result)
+        {
+            if (result.IsSuccess)
+                TempData["successMessage"] = result.Message;
+            else
+                TempData["errorMessage"] = result.Message;
         }
     }
 }

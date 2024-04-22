@@ -86,8 +86,12 @@ namespace KittyShop.Services
             
             var cartForView = _mapper.Map<ShoppingCartModel>(cartEntity);
 
-            cartForView.CartItems.ForEach(cartItem => { totalPrice +=cartItem.Quantity * cartItem.Cat.Price; });
-            cartForView.TotalPrice = totalPrice;
+            if (cartForView is not null)
+            {
+                cartForView.CartItems.ForEach(cartItem => { totalPrice += cartItem.Quantity * cartItem.Cat.Price; });
+                cartForView.TotalPrice = totalPrice;
+            }
+            
             return cartForView;
         }
 
