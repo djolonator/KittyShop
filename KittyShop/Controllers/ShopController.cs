@@ -67,18 +67,16 @@ namespace KittyShop.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateCart(string quantity, string productId, string cartId)
         {
-            var result = new MessageModel();
             try
             {
-                result = await _shopService.UpdateCartForUser(int.Parse(cartId), int.Parse(productId), int.Parse(quantity));
+                var result = await _shopService.UpdateCartForUser(int.Parse(cartId), int.Parse(productId), int.Parse(quantity));
+                SetMessageForUser(result);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"Failed to update item in cart. Code exited with message {ex.Message} at {ex.StackTrace}", ex);
-                result.Message = "Something went wrong, update item failed.";
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong with request." });
             }
-
-            SetMessageForUser(result);
 
             return RedirectToAction("ShoppingCart");
         }

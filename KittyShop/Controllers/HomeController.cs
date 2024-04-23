@@ -1,5 +1,4 @@
-﻿using KittyShop.Data.Entities;
-using KittyShop.Interfaces.IServices;
+﻿using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -30,7 +29,6 @@ namespace KittyShop.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel user)
         {
-            string messsage = "";
             try
             {
                 if (ModelState.IsValid)
@@ -46,7 +44,7 @@ namespace KittyShop.Controllers
                         else
                             return RedirectToAction("Index", "Shop");
                     }
-                    messsage = result.message;
+                    else SetMessageForUser(new MessageModel() { Message = result.message });
                 }
             }
             catch (Exception ex)
@@ -54,8 +52,7 @@ namespace KittyShop.Controllers
                 _logger.LogCritical($"Failed to login. Code exited with message {ex.Message} at {ex.StackTrace}");
                 SetMessageForUser(new MessageModel() { Message = "Something went wrong!" });
             }
-
-            SetMessageForUser(new MessageModel() { Message = messsage });
+            
             return View(user);
         }
 
