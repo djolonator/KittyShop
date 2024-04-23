@@ -20,20 +20,23 @@ namespace KittyShop.Services
             _adminRepository = adminRepository;
         }
 
-        public async Task<string> AddProductAsync(CatModel productModel)
+        public async Task<MessageModel> AddProductAsync(CatModel productModel)
         {
+            var result = new MessageModel();
             var imagePath = await _imageService.SaveProductImageToProjectFolder(productModel.Image!);
             var productEntity = _mapper.Map<Product>(productModel);
             productEntity.ImgUrlPath = imagePath;
 
-            var isSaved = await _adminRepository.AddProductAsync(productEntity);
+            result.IsSuccess = await _adminRepository.AddProductAsync(productEntity);
 
-            return isSaved ? MessagesConstants.ProductAddSuccess : MessagesConstants.ProductAddFail;
+            result.Message = result.IsSuccess ? MessagesConstants.ProductAddSuccess : MessagesConstants.ProductAddFail;
+
+            return result;  
         }
 
-        public async Task<string> EditProductAsync(CatModel product)
+        public async Task<MessageModel> EditProductAsync(CatModel product)
         {
-            string message = string.Empty;
+            var result = new MessageModel();
             var entityToUpdate = await _adminRepository.FindProductByIdAsync(product.ProductId);
 
             if (entityToUpdate != null)
@@ -48,13 +51,13 @@ namespace KittyShop.Services
 
                 _mapper.Map(product, entityToUpdate);
 
-                var isEdited = await _adminRepository.SaveChangesAsync();
-                    message = isEdited ? MessagesConstants.ProductEditSuccess : MessagesConstants.ProductEditFail;
+                result.IsSuccess = await _adminRepository.SaveChangesAsync();
+                result.Message = result.IsSuccess ? MessagesConstants.ProductEditSuccess : MessagesConstants.ProductEditFail;
             }
             else
-                message = MessagesConstants.ProductDoesNotExist;
+                result.Message = MessagesConstants.ProductDoesNotExist;
 
-            return message;
+            return result;
         }
 
         public async Task<(CatModel? product, string message)> FindProductAsync(int productId)
@@ -63,22 +66,19 @@ namespace KittyShop.Services
             var entity = await _adminRepository.FindProductByIdAsync(productId);
             var product = _mapper.Map<CatModel>(entity);
 
-            if (entity == null)
-                message = MessagesConstants.ProductDoesNotExist;
+            message = entity == null ? MessagesConstants.ProductDoesNotExist : message;
 
             return (product, message);
         }
 
-        public async Task<string> DeleteProductAsync(int productId)
+        public async Task<MessageModel> DeleteProductAsync(int productId)
         {
-            string message = string.Empty;
-            var isDeleted = await _adminRepository.DeleteProductAsync(new Product() { ProductId = productId});
+            var result = new MessageModel();
+            result.IsSuccess = await _adminRepository.DeleteProductAsync(new Product() { ProductId = productId});
 
-            if (isDeleted)
-                message = MessagesConstants.ProductDeleteSuccess;
-            else message = MessagesConstants.ProductDeleteFail;
+            result.Message = result.IsSuccess ? MessagesConstants.ProductDeleteSuccess: MessagesConstants.ProductDeleteFail;
 
-            return message;
+            return result;
         }
     }
 }

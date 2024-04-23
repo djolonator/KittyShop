@@ -99,7 +99,7 @@ namespace KittyShop.Services
         public async Task<MessageModel> RegisterUser(RegisterModel model)
         {
             var result = new MessageModel();
-            if (await UsernameExists(model))
+            if (await _homeRepository.UserNameExistsAsync(model.UserName))
                 result.Message = MessagesConstants.UserNameTaken;
             else
             {
@@ -111,11 +111,6 @@ namespace KittyShop.Services
             }
 
             return result;
-        }
-
-        private async Task<bool> UsernameExists(RegisterModel model)
-        {
-            return await _homeRepository.UserNameExistsAsync(model.UserName);
         }
 
         private async Task<bool> CreateUser(RegisterModel model)

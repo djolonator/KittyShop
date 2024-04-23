@@ -6,7 +6,6 @@ using System.Security.Claims;
 
 namespace KittyShop.Controllers
 {
-    //[Authorize(Policy = "Admin")]
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
@@ -36,33 +35,37 @@ namespace KittyShop.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var message = await _adminService.AddProductAsync(cat);
+                    var result = await _adminService.AddProductAsync(cat);
+                    SetMessageForUser(result);
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"Product could not be added. Code exited with message {ex.Message} at {ex.StackTrace}");
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong with request." });
             }
-            //result nosi poruku za korisnika sweetalert
+            
             return RedirectToAction("ShopItemList", "Home");
         }
       
         public async Task<IActionResult> EditShopItem(int productId)
         {
+            string message = "";
             try
             {
                 var result = await _adminService.FindProductAsync(productId);
+                message = result.message;
 
                 if (result.product != null)
-                {
                     return View(result.product);
-                }
+                else SetMessageForUser(new MessageModel() { Message = message });
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"Edit product page failed to load. Code exited with message {ex.Message} at {ex.StackTrace}");
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong with request." });
             }
-            //result.message nosi poruku za korisnika sweetalert
+            
             return RedirectToAction("ShopItemList", "Home");
         }
 
@@ -73,14 +76,16 @@ namespace KittyShop.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var message = await _adminService.EditProductAsync(product);
+                    var result = await _adminService.EditProductAsync(product);
+                    SetMessageForUser(result);
                 }
             }
             catch(Exception ex)
             {
                 _logger.LogCritical($"Edit product failed. Code exited with message {ex.Message} at {ex.StackTrace}");
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong with request." });
             }
-            //result nosi poruku za korisnika
+            
             return RedirectToAction("ShopItemList", "Home");
         }
 
@@ -88,14 +93,23 @@ namespace KittyShop.Controllers
         {
             try
             {
-                var message = await _adminService.DeleteProductAsync(productId);
+                var result = await _adminService.DeleteProductAsync(productId);
+                SetMessageForUser(result);
             }
             catch (Exception ex)
             {
                 _logger.LogCritical($"Edit delete product failed. Code exited with message {ex.Message} at {ex.StackTrace}");
             }
-            //result nosi poruku za korisnika
+            
             return RedirectToAction("ShopItemList", "Home");
+        }
+
+        private void SetMessageForUser(MessageModel result)
+        {
+            if (result.IsSuccess)
+                TempData["successMessage"] = result.Message;
+            else
+                TempData["errorMessage"] = result.Message;
         }
     }
 }
