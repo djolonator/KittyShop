@@ -13,9 +13,10 @@ namespace KittyShop.Utility
         }
         protected override ValidationResult IsValid(object? value, ValidationContext validationContext)
         {
+            
             var imgPath = string.Empty;
             var prop = validationContext.ObjectInstance.GetType().GetProperty(_imgUrlPath);
-
+            //image/jpeg, 
             if (prop != null)
             {
                 var imgPathProperty = prop.GetValue(validationContext.ObjectInstance);
@@ -37,6 +38,20 @@ namespace KittyShop.Utility
             {
                 return new ValidationResult("You must upload image for product");
             }
+            else
+            {
+                var contentTypeProp = value!.GetType().GetProperty("ContentType");
+
+                if (contentTypeProp != null)
+                {
+                    var contentTypeValue = contentTypeProp.GetValue(value)?.ToString();
+
+                    if (contentTypeValue == null || !contentTypeValue.Contains("jpeg", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return new ValidationResult("Image must be jpeg format");
+                    }
+                }
+            }
 
             var file = value as IFormFile;
 
@@ -51,7 +66,7 @@ namespace KittyShop.Utility
 
             if (width != height)
             {
-                return new ValidationResult("Ratio must be 1:1");
+                return new ValidationResult("Ratio of image must be 1:1");
             }
             else
                 return ValidationResult.Success!;

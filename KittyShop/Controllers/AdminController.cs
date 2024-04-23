@@ -38,6 +38,8 @@ namespace KittyShop.Controllers
                     var result = await _adminService.AddProductAsync(cat);
                     SetMessageForUser(result);
                 }
+                else
+                    return View(cat);
             }
             catch (Exception ex)
             {
