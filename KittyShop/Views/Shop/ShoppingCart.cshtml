@@ -7,15 +7,12 @@
 }
 <div class="container">
     <div class="container">
-        <div class="">
-
-            @foreach (var item in Model.CartItems)
-            {
-                <div class="">
-                    @await Html.PartialAsync("_CartItemPartial", item)
-                </div>
-            }
-        </div>
+        @foreach (var item in Model.CartItems)
+        {
+            <div class="cardDiv">
+                @await Html.PartialAsync("_CartItemPartial", item)
+            </div>
+        }
     </div>
     <div class="row">
         <div class="col  offset-md-3">

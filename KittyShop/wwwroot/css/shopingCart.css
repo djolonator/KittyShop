@@ -7,3 +7,8 @@
     display: flex;
     justify-content: space-between;
 }
+
+.cardDiv {
+    display: flex;
+    justify-content: space-around;
+}
