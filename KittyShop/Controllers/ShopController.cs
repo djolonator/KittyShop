@@ -90,6 +90,21 @@ namespace KittyShop.Controllers
             return RedirectToAction("ShoppingCart");
         }
 
+        public async Task<IActionResult> Checkout(int shoppingCartId)
+        {
+            try
+            {
+                var result = await _shopService.Checkout(shoppingCartId);
+                SetMessageForUser(result);
+            }
+            catch( Exception ex)
+            {
+                _logger.LogCritical($"Failed to checkout. Code exited with message {ex.Message} at {ex.StackTrace}", ex);
+                SetMessageForUser(new MessageModel() { Message = "Something went wrong with request." });
+            }
+            return RedirectToAction("Index", "Shop");
+        }
+
         private void SetMessageForUser(MessageModel result)
         {
             if (result.IsSuccess)

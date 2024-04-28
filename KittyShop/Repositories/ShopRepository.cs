@@ -64,5 +64,10 @@ namespace KittyShop.Repositories
 
             return await SaveChangesAsync();
         }
+
+        public async Task DeleteCart(int shoppingCartId)
+        {
+            _context.ShoppingCarts.Remove(new ShoppingCart() { ShoppingCartId = shoppingCartId});
+        }
     }
 }

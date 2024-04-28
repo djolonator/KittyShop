@@ -16,7 +16,7 @@
     </div>
     <div class="row">
         <div class="col  offset-md-3">
-            <a href="/Shop/Checkout" class="btn btn-success" role="button">Checkout</a>
+            <a asp-controller="Shop" asp-action="Checkout" asp-route-shoppingCartId=@Model.ShoppingCartId role="button" class="btn btn-success">Checkout</a>
         </div>
         <div class="col  offset-md-3">
             <p>Total $ <small id="totalPriceSmall"></small>@Model.TotalPrice</p>

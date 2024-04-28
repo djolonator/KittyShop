@@ -12,5 +12,6 @@ namespace KittyShop.Interfaces.IRepositories
         Task<ShoppingCart?> FindShopingCartByUserIdAsync(int userId);
         Task<ShoppingCart?> GetShoppingCartByIdAsync(int cartId);
         Task<bool> IncreaseQuantityByOne(int shoppingCartId, int productId);
+        Task DeleteCart(int shoppingCartId);
     }
 }

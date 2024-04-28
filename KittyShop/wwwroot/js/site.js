@@ -33,10 +33,13 @@ function userIsLoggedIn() {
 
 function setItemNumberCookie() {
 
+    let isNumberOfItemsInCartUpdated = false;
     let numberOfItemsInCart = parseInt($(".numberOfItemsInCart").text(), 10)
+    isNumberOfItemsInCartUpdated = numberOfItemsInCart || numberOfItemsInCart === 0;
+
     let cookie = Cookies.get('cartCount');
 
-    if (numberOfItemsInCart)
+    if (isNumberOfItemsInCartUpdated)
         Cookies.set('cartCount', numberOfItemsInCart);
     else if (!cookie)
         Cookies.set('cartCount', 0);

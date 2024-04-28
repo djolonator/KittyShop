@@ -128,5 +128,17 @@ namespace KittyShop.Services
 
             return result;
         }
+
+        public async Task<MessageModel> Checkout(int cartId)
+        {
+            var result = new MessageModel();
+            await _shopRepository.DeleteCart(cartId);
+            result.IsSuccess = await _shopRepository.SaveChangesAsync();
+            if (result.IsSuccess)
+                result.Message = MessagesConstants.CheckoutSuccess;
+            else
+                result.Message = MessagesConstants.CheckoutFail;
+            return result;
+        }
     }
 }

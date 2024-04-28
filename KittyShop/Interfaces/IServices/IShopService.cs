@@ -11,5 +11,6 @@ namespace KittyShop.Interfaces.IServices
         Task<MessageModel> UpdateCartForUser(int cartId, int productId, int quantity);
         Task<int> GetNumberOfItemsFromCart(int userId);
         int GetNumberOfItemsInCart(ShoppingCartModel cart);
+        Task<MessageModel> Checkout(int cartId);
     }
 }
