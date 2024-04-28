@@ -46,3 +46,11 @@ function updateItemNumberCookie() {
     Cookies.set('cartCount', cartCount);
 }
 
+function clearSeachFields() {
+
+    $('input[name="furrColor"]').val('');
+    $('input[name="eyesColor"]').val('');
+    $('input[name="description"]').val('');
+    $('input[name="race"]').val('');
+}
+
