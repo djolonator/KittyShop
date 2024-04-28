@@ -5,6 +5,7 @@
     });
 });
 
+
 function enableUpdateButton(selectElement) {
     let button = $(selectElement).siblings(".btn");
     $(button).prop("disabled", false);

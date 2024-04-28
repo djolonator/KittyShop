@@ -27,3 +27,12 @@
     display: flex;
     justify-content: center;
 }
+
+.hideDiv{
+    display:none!important;
+}
+
+.addToCartDiv {
+    display: flex;
+    flex-direction: column;
+}

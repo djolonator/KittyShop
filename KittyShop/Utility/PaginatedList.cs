@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using KittyShop.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace KittyShop.Utility
 {

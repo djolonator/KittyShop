@@ -134,7 +134,7 @@ namespace KittyShop.Controllers
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 
             string description, string race, int? pageNumber)
         {
-            int pageSize = 3;
+            int pageSize = 5;
             var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
 
             PreserveSearchParametersThroughPagination(furrColor, eyesColor, description, race);

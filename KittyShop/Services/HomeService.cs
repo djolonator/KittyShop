@@ -5,30 +5,31 @@ using KittyShop.Interfaces.IServices;
 using KittyShop.Models;
 using KittyShop.Utility;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace KittyShop.Services
 {
     public class HomeService : IHomeService
     {
         private readonly IHomeRepository _homeRepository;
+        private readonly IShopRepository _shopRepository;
         private readonly CipherService _cipherService;
         private readonly IMapper _mapper;
 
-        public HomeService(IHomeRepository homeRepository, CipherService cipherService, IMapper mapper)
+        public HomeService(IHomeRepository homeRepository, CipherService cipherService, IMapper mapper, IShopRepository shopRepository)
         {
             _homeRepository = homeRepository;
             _cipherService = cipherService;
             _mapper = mapper;
+            _shopRepository = shopRepository;
         }
         public async Task<PaginatedList<CatModel>> GetProductsAsync(string furrColor, string eyesColor,
             string description, string race, int? pageNumber, int pageSize)
         {
-            var allProducts = _homeRepository.GetAllProductsAsQueryable();
-            allProducts = AddFilters(furrColor, eyesColor, description, race, allProducts);
-            var paginatedProductsModel = ConvertEntitiesToModels(allProducts);
+            var products = _homeRepository.GetAllProductsAsQueryable();
+            products = AddFilters(furrColor, eyesColor, description, race, products);
+            var paginatedProductsModel = ConvertEntitiesToModels(products);
             var listToReturn = await PaginatedList<CatModel>.CreateAsync(paginatedProductsModel.AsNoTracking(), pageNumber ?? 1, pageSize);
-
+            
             return listToReturn;
         }
 

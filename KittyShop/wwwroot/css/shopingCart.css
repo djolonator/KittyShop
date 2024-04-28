@@ -2,3 +2,8 @@
     display: flex;
     justify-content: space-between;
 }
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+}

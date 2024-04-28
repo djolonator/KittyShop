@@ -1,17 +1,33 @@
-﻿function addToCart(productId) {
+﻿
+
+function addToCart(productId) {
+
+    callShopAddToCart(productId);
+}
+
+function callShopAddToCart(productId) {
     $.ajax({
         url: '/Shop/AddToCart',
         type: 'POST',
         data: { productId: productId },
         success: function (response) {
 
-            if (response.success) 
+            if (response.success) {
                 showToasterShopPage(response.message, response.success);
-            else 
+                /*hideProductDivFromList(productId);*/
+            }
+            else
                 showToasterShopPage(response.message);
         }
     });
 }
+
+function hideProductDivFromList(productId) {
+
+    let div = $("#" + productId);
+    $(div).attr('style', 'display: none !important');
+}
+
 
 function showToasterShopPage(message, error = false) {
 

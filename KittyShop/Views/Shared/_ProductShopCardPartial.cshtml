@@ -1,5 +1,9 @@
 ﻿@model CatModel
 
+@{
+    var productId = Model.ProductId;
+}
+
 
 <div class="card" style="width: 18rem;">
     <img src="~/@Model.ImgUrlPath" class="card-img-top" alt="...">
@@ -10,13 +14,16 @@
             if (ViewBag.UserType == "Admin")
             {
                 <div class="cardButtonDiv">
-                    <a asp-controller="Admin" asp-action="EditShopItem" asp-route-productId="@Model.ProductId" class="btn btn-primary btn-sm">Edit product</a>
-                    <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-productId="@Model.ProductId" class="btn btn-danger btn-sm">Delete product</a>
+                    <a asp-controller="Admin" asp-action="EditShopItem" asp-route-productId=@productId class="btn btn-primary btn-sm">Edit product</a>
+                    <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-productId=@productId class="btn btn-danger btn-sm">Delete product</a>
                 </div>
             }
             else
             {
-                <a href="#" class="btn btn-primary btn-sm addToCartButton" onclick="addToCart(@Model.ProductId)">Add to cart</a>
+                <div class="addToCartDiv">
+                <h5 class="">Price $@Model.Price</h5>
+                <a href="#" class="btn btn-primary btn-sm addToCartButton" onclick="addToCart(@productId)">Add to cart</a>
+                </div>
             }
         }
     </div>

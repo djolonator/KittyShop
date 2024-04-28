@@ -10,7 +10,10 @@
         </div>
         <div class="col-md-8">
             <div class="card-body">
-                <h5 class="">Price @Model.Cat.Price</h5>
+                <div class="cardHeader">
+                    <h5> @Model.Cat.Race</h5>
+                    <h5 class="">$@Model.Cat.Price</h5>
+                </div>
                 <div>
                     <p class="card-text">@Model.Cat.Description</p>
                     <div class="quantityAndPriceDiv">
