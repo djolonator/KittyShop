@@ -7,7 +7,6 @@
         setItemNumberCookie();
         setCartBadgeValue();
     }
-    
 });
 
 function showToasterGlobal() {
@@ -34,19 +33,13 @@ function userIsLoggedIn() {
 
 function setItemNumberCookie() {
 
-    let numberOfItemsInCart = parseInt($(".numberOfItemsInCart").text(), 10);
+    let numberOfItemsInCart = parseInt($(".numberOfItemsInCart").text(), 10)
     let cookie = Cookies.get('cartCount');
 
     if (numberOfItemsInCart)
         Cookies.set('cartCount', numberOfItemsInCart);
-}
-
-function updateItemNumberCookie() {
-
-    let cartCountString = Cookies.get('cartCount');
-    cartCount = parseInt(cartCountString, 10);
-    cartCount = cartCount + 1;
-    Cookies.set('cartCount', cartCount);
+    else if (!cookie)
+        Cookies.set('cartCount', 0);
 }
 
 function setCartBadgeValue() {
@@ -58,6 +51,7 @@ function setCartBadgeValue() {
 
     if (cartCount !== 0) {
         $(".numberOfItemsBadge").text(cartCount);
+        $(".numberOfItemsBadge").removeClass("d-none");
     }
 }
 

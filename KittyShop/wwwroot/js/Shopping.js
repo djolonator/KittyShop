@@ -38,3 +38,11 @@ function showToasterShopPage(message, error = false) {
         notyf.success(message);
 }
 
+function updateItemNumberCookie() {
+
+    let cartCountString = Cookies.get('cartCount');
+    cartCount = parseInt(cartCountString, 10);
+    cartCount = cartCount + 1;
+    Cookies.set('cartCount', cartCount);
+}
+

@@ -35,7 +35,7 @@ body {
 
 .nav-link .numberOfItemsBadge {
     position: absolute;
-    top: -1px;
+    top: -9px;
     right: -6px;
     background: #39F;
     color: white;
