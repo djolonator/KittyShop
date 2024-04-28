@@ -9,5 +9,7 @@ namespace KittyShop.Interfaces.IServices
         Task<MessageModel> AddProductToUserCartAsync(int userId, int productId);
         Task<ShoppingCartModel> GetShoppingCartForUser(int userId);
         Task<MessageModel> UpdateCartForUser(int cartId, int productId, int quantity);
+        Task<int> GetNumberOfItemsFromCart(int userId);
+        int GetNumberOfItemsInCart(ShoppingCartModel cart);
     }
 }

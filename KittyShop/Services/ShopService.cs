@@ -79,6 +79,19 @@ namespace KittyShop.Services
             bool isAdded = await _shopRepository.AddShoppingKartAsync(cartForUser);
         }
 
+        public async Task<int> GetNumberOfItemsFromCart(int userId)
+        {
+            var cartEntity = await _shopRepository.FindShopingCartByUserIdAsync(userId);
+
+            return cartEntity == null ? 0 : cartEntity.CartItems.Sum(cartItem => cartItem.Quantity);
+
+        }
+
+        public int GetNumberOfItemsInCart(ShoppingCartModel cart)
+        {
+            return cart == null ? 0 : cart.CartItems.Sum(cartItem => cartItem.Quantity);
+        }
+
         public async Task<ShoppingCartModel> GetShoppingCartForUser(int userId)
         {
             var cartEntity = await _shopRepository.FindShopingCartByUserIdAsync(userId);

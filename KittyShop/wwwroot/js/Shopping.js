@@ -13,8 +13,7 @@ function callShopAddToCart(productId) {
         success: function (response) {
 
             if (response.success) {
-                showToasterShopPage(response.message, response.success);
-                /*hideProductDivFromList(productId);*/
+                handleResponse(response.message, response.success);
             }
             else
                 showToasterShopPage(response.message);
@@ -22,12 +21,12 @@ function callShopAddToCart(productId) {
     });
 }
 
-function hideProductDivFromList(productId) {
+function handleResponse(message = '', isSuccess = false) {
 
-    let div = $("#" + productId);
-    $(div).attr('style', 'display: none !important');
+    showToasterShopPage(message, isSuccess);
+    updateItemNumberCookie();
+    setCartBadgeValue();
 }
-
 
 function showToasterShopPage(message, error = false) {
 
@@ -38,3 +37,4 @@ function showToasterShopPage(message, error = false) {
     else
         notyf.success(message);
 }
+

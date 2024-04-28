@@ -119,8 +119,8 @@ namespace KittyShop.Controllers
                     var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
                     var result = await _homeService.EditProfile(user, userId);
                     SetMessageForUser(result);
-                    return View(user);
                 }
+                return View(user);
             }
             catch (Exception ex)
             {
@@ -134,7 +134,7 @@ namespace KittyShop.Controllers
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 
             string description, string race, int? pageNumber)
         {
-            int pageSize = 5;
+            int pageSize = 6;
             var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
 
             PreserveSearchParametersThroughPagination(furrColor, eyesColor, description, race);

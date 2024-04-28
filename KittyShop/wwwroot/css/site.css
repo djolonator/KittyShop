@@ -1,20 +1,20 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 .imgcontainer {
@@ -27,3 +27,18 @@ body {
     width: 350px;
     margin: 0 auto;
 }
+
+.nav-link {
+    position: relative;
+    display: inline-block;
+}
+
+.nav-link .numberOfItemsBadge {
+    position: absolute;
+    top: -1px;
+    right: -6px;
+    background: #39F;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+}   

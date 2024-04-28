@@ -18,9 +18,12 @@ namespace KittyShop.Controllers
             _logger = logger;
         }
 
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
+            var identity = (ClaimsIdentity)User.Identity!;
+            var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
+            var numberOfItemsInCart = await _shopService.GetNumberOfItemsFromCart(userId);
+            TempData["numberOfItemsInCart"] = numberOfItemsInCart;
             return View();
         }
 
@@ -32,7 +35,12 @@ namespace KittyShop.Controllers
                 var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
                 var cart = await _shopService.GetShoppingCartForUser(userId);
                 if (cart != null)
+                {
+                    var numberOfItems = _shopService.GetNumberOfItemsInCart(cart);
+                    TempData["numberOfItemsInCart"] = numberOfItems;
                     return View(cart);
+                }
+                   
                 else
                     SetMessageForUser(new MessageModel() { Message = "Your cart is empty, add items to it.", IsSuccess = true });
             }
@@ -55,6 +63,7 @@ namespace KittyShop.Controllers
                 var identity = (ClaimsIdentity)User.Identity!;
                 var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
                 result = await _shopService.AddProductToUserCartAsync(userId, productId);
+                               
             }
             catch(Exception ex) 
             {
