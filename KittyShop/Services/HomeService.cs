@@ -182,16 +182,15 @@ namespace KittyShop.Services
                     userToEdit!.Email = userToEdit.NewEmail;
                 if (isNameChange)
                 {
-                    if (!await _homeRepository.UserNameExistsAsync(userToEdit.NewUserName!))
-                    {
-                        isNameChangeValid = true;
+                    isNameChangeValid = !await _homeRepository.UserNameExistsAsync(userToEdit.NewUserName!);
+
+                    if (isNameChangeValid)
                         userToEdit!.UserName = userToEdit.NewUserName!;
-                    }
                     else
                         result.Message = MessagesConstants.UserNameTaken;
                 }
 
-                if (isNameChangeValid || isEmailChange || isPasswordChange)
+                if ((!isNameChange || isNameChangeValid) || (isEmailChange || isPasswordChange))
                 {
                     var entityToUpdate = await _homeRepository.FindUserByIdAsync(userId);
                     _mapper.Map(userToEdit, entityToUpdate);

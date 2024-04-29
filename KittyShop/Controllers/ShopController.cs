@@ -3,7 +3,6 @@ using KittyShop.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using System.Threading.Tasks.Dataflow;
 
 namespace KittyShop.Controllers
 {

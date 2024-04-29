@@ -19,7 +19,6 @@ namespace KittyShop.Controllers
         
         public async Task<IActionResult> Index()
         {
-            var roleClaim = User.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault();
             return View();
         }
 
