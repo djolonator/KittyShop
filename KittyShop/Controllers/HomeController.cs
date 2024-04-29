@@ -90,6 +90,7 @@ namespace KittyShop.Controllers
             return View(user);
         }
 
+        [Authorize]
         public async Task<IActionResult> EditProfile()
         {
             try
@@ -132,6 +133,7 @@ namespace KittyShop.Controllers
             return View(user);
         }
 
+        [Authorize]
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 
             string description, string race, int? pageNumber)
         {
