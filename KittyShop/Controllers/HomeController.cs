@@ -35,7 +35,7 @@ namespace KittyShop.Controllers
                 {   
                     var result = await _homeService.Login(user);
 
-                    if (result.userModel != null)
+                    if (result.userModel!.UserId != 0)
                     {
                         await SignInUser(MakeClaims(result.userModel));
                         
@@ -119,8 +119,9 @@ namespace KittyShop.Controllers
                     var userId = int.Parse(identity.FindFirst(ClaimTypes.SerialNumber)!.Value);
                     var result = await _homeService.EditProfile(user, userId);
                     SetMessageForUser(result);
+                    if (result.IsSuccess)
+                        return View();
                 }
-                return View(user);
             }
             catch (Exception ex)
             {
@@ -128,7 +129,7 @@ namespace KittyShop.Controllers
                 SetMessageForUser(new MessageModel() { Message = "Something went wrong, redirecting to index page" });
             }
 
-            return RedirectToAction("Index", "Shop");
+            return View(user);
         }
 
         public async Task<IActionResult> ShopItemList(string furrColor, string eyesColor, 

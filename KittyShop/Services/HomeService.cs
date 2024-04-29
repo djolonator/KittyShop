@@ -29,7 +29,7 @@ namespace KittyShop.Services
             products = AddFilters(furrColor, eyesColor, description, race, products);
             var paginatedProductsModel = ConvertEntitiesToModels(products);
             var listToReturn = await PaginatedList<CatModel>.CreateAsync(paginatedProductsModel.AsNoTracking(), pageNumber ?? 1, pageSize);
-            
+
             return listToReturn;
         }
 
@@ -134,11 +134,14 @@ namespace KittyShop.Services
             var isAuthenticated = await AuthenticateUser(model.UserName, model.Password);
 
             if (!isAuthenticated.verdict)
+            {
+                model = new LoginModel();
                 message = MessagesConstants.WrongLoginCredentials;
-            
-            var userModel = _mapper.Map<LoginModel>(isAuthenticated.user);
+            }
+            else
+                model = _mapper.Map<LoginModel>(isAuthenticated.user);
 
-            return (userModel, message);
+            return (model, message);
         }
 
         private async Task<(bool verdict, User? user)> AuthenticateUser(string userName, string password)
@@ -165,35 +168,45 @@ namespace KittyShop.Services
         public async Task<MessageModel> EditProfile(EditProfileModel userToEdit, int userId)
         {
             var result = new MessageModel();
-            var entityToUpdate = await _homeRepository.FindUserByIdAsync(userId);
+            bool isPasswordChange = userToEdit.NewPassword != null;
+            bool isEmailChange = userToEdit.NewEmail != null;
+            bool isNameChange = userToEdit.NewUserName != null;
+            bool isNameChangeValid = false;
+            bool isChanged = isNameChange || isEmailChange || isPasswordChange;
 
-            if (userToEdit.NewPassword != null)
-                userToEdit!.Password = _cipherService.Encrypt(userToEdit.NewPassword);
-
-            if (userToEdit.NewEmail != null)
-                userToEdit!.Email = userToEdit.NewEmail;
-
-            if (userToEdit.NewUserName != null)
+            if (isChanged)
             {
-                var userNameExists = await _homeRepository.UserNameExistsAsync(userToEdit.NewUserName);
-
-                if (userNameExists)
+                if (isPasswordChange)
+                    userToEdit!.Password = _cipherService.Encrypt(userToEdit.NewPassword!);
+                if (isEmailChange)
+                    userToEdit!.Email = userToEdit.NewEmail;
+                if (isNameChange)
                 {
-                    result.Message = MessagesConstants.UserNameTaken;
+                    if (!await _homeRepository.UserNameExistsAsync(userToEdit.NewUserName!))
+                    {
+                        isNameChangeValid = true;
+                        userToEdit!.UserName = userToEdit.NewUserName!;
+                    }
+                    else
+                        result.Message = MessagesConstants.UserNameTaken;
                 }
-                else
+
+                if (isNameChangeValid || isEmailChange || isPasswordChange)
                 {
-                    userToEdit!.UserName = userToEdit.NewUserName!;
+                    var entityToUpdate = await _homeRepository.FindUserByIdAsync(userId);
                     _mapper.Map(userToEdit, entityToUpdate);
-
                     result.IsSuccess = await _homeRepository.SaveChangesAsync();
-
                     if (result.IsSuccess)
-                        result.Message = MessagesConstants.UserEditedSuccessfully;
+                        result.Message = MessagesConstants.UserEditSuccess;
                 }
+            }
+            else
+            {
+                result.IsSuccess = true;
+                result.Message = MessagesConstants.UserEditNoChange;
             }
 
             return result;
         }
-    }
+    } 
 }

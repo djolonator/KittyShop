@@ -10,8 +10,10 @@
         public const string UserEditedSuccessfully = "User edited successfully.";
 
         public const string RegisterFail = "User could not be created!";
-        public const string RegisterSuccess = "Congratulation. Uou are now registered user.";
-        public const string UseEdited = "User successfully edited.";
+        public const string RegisterSuccess = "Congratulation. You are now registered user.";
+        public const string UserEditSuccess = "User successfully edited.";
+        public const string UserEditFailed = "User failed to edit!";
+        public const string UserEditNoChange = "No changes.";
 
         public const string ProductAddSuccess = "Product successfully added.";
         public const string ProductAddFail = "Failed to add product!";
